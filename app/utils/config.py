@@ -34,6 +34,9 @@ class Settings(BaseSettings):
 	jwt_algorithm: str = Field(default="HS256", alias="JWT_ALGORITHM")
 	jwt_expire_minutes: int = Field(default=60, alias="JWT_EXPIRE_MINUTES")
 
+	# Gemini AI
+	gemini_api_key: str = Field(default="", alias="GEMINI_API_KEY")
+
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:

@@ -127,6 +127,14 @@ class Prescription(Base):
         lazy="select",
     )
 
+    analysis: Mapped["AIAnalysis | None"] = relationship(  # type: ignore[name-defined]  # noqa: F821
+        "AIAnalysis",
+        back_populates="prescription",
+        cascade="all, delete-orphan",
+        uselist=False,
+        lazy="select",
+    )
+
     # ------------------------------------------------------------------
     # Repr — never log file_path or symptoms in plain text
     # ------------------------------------------------------------------

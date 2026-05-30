@@ -17,6 +17,8 @@ from sqlalchemy import engine_from_config, pool
 from app.database.base import Base
 from app.models.user_model import User  # noqa: F401  — registers table in metadata
 from app.models.prescription_model import Prescription  # noqa: F401  — registers table in metadata
+from app.models.analysis_model import AIAnalysis  # noqa: F401  — registers table in metadata
+from app.models.medicine_model import Medicine  # noqa: F401  — registers table in metadata
 from app.utils.config import get_settings
 
 # ---------------------------------------------------------------------------
