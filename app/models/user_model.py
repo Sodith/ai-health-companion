@@ -6,7 +6,7 @@ from datetime import datetime
 from uuid import uuid4
 
 from sqlalchemy import Boolean, DateTime, String, func, text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
 
@@ -39,6 +39,16 @@ class User(Base):
 		nullable=False,
 		server_default=func.now(),
 		onupdate=func.now(),
+	)
+
+	# ------------------------------------------------------------------
+	# Relationships
+	# ------------------------------------------------------------------
+	prescriptions: Mapped[list["Prescription"]] = relationship(  # type: ignore[name-defined]  # noqa: F821
+		"Prescription",
+		back_populates="owner",
+		cascade="all, delete-orphan",
+		lazy="select",
 	)
 
 	def __repr__(self) -> str:

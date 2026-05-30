@@ -9,3 +9,8 @@ dist/
 build/
 .pytest_cache/
 .idea/
+
+# Uploaded prescription files (keep directory structure, ignore content)
+uploads/**
+!uploads/prescriptions/.gitkeep
+
