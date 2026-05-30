@@ -1,0 +1,163 @@
+Take-Home Assignment 
+
+Full-Stack AI-Powered Health Companion App 
+
+End-to-End Build, Containerization & Cloud Deployment 
+
+ 
+
+1. Overview 
+
+Your task is to design, build, containerize, and deploy a full-stack AI-powered Health Companion application. The goal is not necessarily to ship every feature listed below; it is to demonstrate how you think about product engineering as a whole: from authentication and API design, to AI integration, to writing a Dockerfile, to standing up infrastructure on AWS. 
+
+You are encouraged to use AI assistants (Claude, ChatGPT, Cursor, Copilot, v0, Bolt, Lovable, etc.) and any "vibe-coding" tools you prefer. We care about your judgment and the final artifact, not whether you typed every character yourself. However, you must understand and be able to defend every line of code in the walkthrough. 
+
+2. Problem Context 
+
+Patients, especially the elderly and those managing chronic conditions; frequently struggle to track which medicines they have been prescribed, what dosage to take, and what their doctor has advised them to do alongside the medication. Prescriptions are usually handwritten or printed PDFs, which means information lives in formats that are hard to query. 
+
+You will build a small product that lets a user upload a prescription and describe their symptoms. The app will then return an AI-generated structured summary containing the medicines prescribed, the dosage schedule, the doctor's advice, and the activities or lifestyle changes that would be good for the patient to follow: derived from the prescription, the symptoms entered by the user, and the diseases the AI recognizes from those inputs. 
+
+3. Core Features 
+
+Features are split into Must-Have and Good-to-Have. Must-Haves should be working end-to-end before you attempt any Good-to-Haves. Partial, well-built features score higher than many half-broken ones. 
+
+3.1 Authentication (Must-Have) 
+
+User signup with email and password (passwords must be hashed — bcrypt, argon2, or equivalent; never stored in plain text). 
+
+Login that returns a signed JWT access token. 
+
+All non-auth API endpoints must be protected by JWT middleware. 
+
+Basic input validation and sane error responses (e.g., 400 / 401 / 409 with structured payloads). 
+
+3.2 Prescription & Health Issue Submission (Must-Have) 
+
+Authenticated users can upload a prescription as an image (JPG/PNG) or PDF. 
+
+Users can additionally enter free-text notes describing their symptoms or health concerns. 
+
+Each submission must be stored and associated with the user account. 
+
+File handling should be reasonable — local disk, S3, or a Docker volume are all acceptable. Document your choice. 
+
+3.3 AI Analysis (Must-Have) 
+
+Use the free tier of the Google Gemini API (the candidate must obtain their own API key from Google AI Studio). 
+
+Pass the uploaded prescription (image / extracted text) and the user's symptom notes to the model. 
+
+Return a structured response containing: the list of medicines prescribed by the doctor with dosage and schedule, the doctor's advice, and the activities or lifestyle changes that would be good for the patient to follow — derived from the prescription, the symptoms entered by the user, and the diseases the AI recognises from those inputs. 
+
+The AI's structured output must be persisted to the database — do not re-call the LLM on every page load. 
+
+Important: include a clear, user-visible disclaimer that this is not medical advice. 
+
+3.4 Medicine Recognition & Reminders (Good-to-Have) 
+
+From the AI's structured output, create a Medicine record per detected medicine, including name, dosage, frequency (e.g., 2x/day), and duration (e.g., 5 days). 
+
+Generate a reminder schedule based on frequency and duration. 
+
+Trigger reminders via any reasonable channel — in-app notification feed, email, a cron-driven worker, or a websocket push. Pick one and justify the choice in your README. 
+
+Users should be able to mark a dose as taken / skipped. 
+
+4. Technical Constraints 
+
+Area 
+
+Requirement 
+
+Frontend 
+
+Any modern framework (React / Next.js / Vue / Svelte / Angular). Should be a real SPA or SSR app — not a single static HTML file. 
+
+Backend 
+
+Any language / framework you are comfortable defending (Node/Express, NestJS, FastAPI, Django, Spring Boot, Go, etc.). 
+
+Database 
+
+Any persistent store — Postgres, MySQL, MongoDB, SQLite. Document your schema. 
+
+AI Provider 
+
+Google Gemini API (free tier). Do not commit your API key to git — use environment variables. 
+
+Auth 
+
+JWT-based. 
+
+Containerization 
+
+A working Dockerfile per service. A docker-compose.yml is strongly preferred for local dev. 
+
+Deployment 
+
+Deploy to a free-tier AWS EC2 instance (t2.micro or t3.micro). The app must be reachable over the public internet at submission time. 
+
+Source control 
+
+Public GitHub repository. A single commit is acceptable. 
+
+ 
+
+5. Deployment Requirements 
+
+Provision a single AWS EC2 free-tier instance (t2.micro or t3.micro, Ubuntu / Amazon Linux). 
+
+Install Docker on the instance and run your app from the image(s) you built — do NOT run the code natively on the host. 
+
+Configure security groups so the app is reachable from the public internet on the appropriate port (80 or a documented custom port). 
+
+Document the full deployment runbook in your README so a reviewer could redeploy from scratch on a fresh instance. 
+
+Note: Anything that costs money beyond AWS free tier (RDS, ECS Fargate, ALB, etc.) is out of scope. Stay on EC2. 
+
+6. Deliverables 
+
+GitHub repository link (public), containing frontend, backend, Dockerfile(s), and docker-compose.yml if applicable. 
+
+A live URL or public IP of the deployed app on EC2. 
+
+A README.md at the root of the repo containing: architecture diagram or description, environment variables and how to obtain them, local setup instructions, deployment runbook for EC2, list of features completed vs skipped, and any known issues or trade-offs. 
+
+7. Evaluation Criteria 
+
+You will be scored across three sections of equal weight (each section is one third of the total). 
+
+Section 
+
+Weight 
+
+What we look for 
+
+Code 
+
+33% 
+
+Code quality, readability, modularity, error handling, validation, sensible naming. How well you can walk us through the code in the interview and justify decisions. 
+
+System Design 
+
+33% 
+
+API design, data model, separation of concerns, how AI is integrated, secrets handling, request/response contracts. 
+
+Deployment Architecture 
+
+33% 
+
+Dockerfile quality (multi-stage, small image, non-root user is a plus), reproducibility, EC2 setup, security group hygiene, the deployment runbook, and whether the live app actually works. 
+
+ 
+
+How completion factors in: a partially complete submission with clean code, a clear design, and a real deployment will score higher than a feature-complete submission that is messy, undocumented, or undeployed. Demonstrating strong fundamentals on a smaller surface area is a winning strategy. 
+
+ 
+
+ 
+
+Good luck — we're excited to see what you build. 
