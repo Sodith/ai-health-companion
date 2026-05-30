@@ -4,7 +4,63 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="24494f09-0fd6-4153-b81e-6fc815fb6e52" name="Changes" comment=" phase 3 completed-tested with real key" />
+    <list default="true" id="24494f09-0fd6-4153-b81e-6fc815fb6e52" name="Changes" comment="phase4 started">
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/guards/auth.guard.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/guards/auth.guard.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/interceptors/jwt.interceptor.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/interceptors/jwt.interceptor.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/services/analysis.service.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/services/analysis.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/services/auth.service.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/services/auth.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/services/notification.service.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/services/notification.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/services/prescription.service.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/services/prescription.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/analysis/details/details.component.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/analysis/details/details.component.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/analysis/details/details.component.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/analysis/details/details.component.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/login/login.component.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/login/login.component.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/login/login.component.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/login/login.component.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/signup/signup.component.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/signup/signup.component.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/signup/signup.component.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/signup/signup.component.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/prescriptions/list/list.component.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/prescriptions/list/list.component.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/prescriptions/list/list.component.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/prescriptions/list/list.component.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/prescriptions/upload/upload.component.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/prescriptions/upload/upload.component.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/prescriptions/upload/upload.component.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/prescriptions/upload/upload.component.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/medical-disclaimer/medical-disclaimer.component.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/spinner/spinner.component.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/interfaces/api-response.interface.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/models/analysis.model.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/models/prescription.model.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/models/user.model.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/environments/environment.prod.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/environments/environment.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.routes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.routes.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/styles.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles.scss" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -28,18 +84,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "SodithKumar"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;SodithKumar&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Sodith/ai-health-companion.git",
-    "accountId": "adf770ce-7699-4c95-ad02-0787c545bd57"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Sodith/ai-health-companion.git&quot;,
+    &quot;accountId&quot;: &quot;adf770ce-7699-4c95-ad02-0787c545bd57&quot;
   }
-}]]></component>
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
@@ -55,19 +111,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "G:/Assignments/ai-health-companion",
-    "to.speed.mode.migration.done": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;G:/Assignments/ai-health-companion&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="ai-health-app" />
@@ -140,14 +196,23 @@
       <option name="project" value="LOCAL" />
       <updated>1780158921662</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="phase4 started">
+      <option name="closed" value="true" />
+      <created>1780159233432</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1780159233432</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value=" phase 2 completed" />
     <MESSAGE value=" phase 3 completed" />
     <MESSAGE value=" phase 3 completed-tested with real key" />
-    <option name="LAST_COMMIT_MESSAGE" value=" phase 3 completed-tested with real key" />
+    <MESSAGE value="phase4 started" />
+    <option name="LAST_COMMIT_MESSAGE" value="phase4 started" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

@@ -1,0 +1,19 @@
+// Login inherits all layout from global .auth-page / .auth-card classes.
+// Component-specific tweaks only.
+
+.auth-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  mat-spinner {
+    display: inline-block;
+  }
+}
+
+mat-icon[matPrefix] {
+  margin-right: 4px;
+  color: var(--text-secondary);
+}
+

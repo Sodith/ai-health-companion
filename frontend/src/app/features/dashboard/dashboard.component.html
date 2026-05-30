@@ -1,0 +1,236 @@
+<app-spinner [loading]="loading()" />
+
+<!-- ══ Toolbar / Nav ══════════════════════════════════════════════════════════ -->
+<mat-toolbar class="app-toolbar">
+  <div class="toolbar-inner">
+
+    <!-- Brand -->
+    <div class="brand">
+      <mat-icon class="brand-icon">favorite</mat-icon>
+      <span class="brand-name">AI Health Companion</span>
+    </div>
+
+    <!-- Nav links (desktop) -->
+    <nav class="toolbar-nav desktop-only">
+      <a mat-button routerLink="/dashboard">
+        <mat-icon>dashboard</mat-icon> Dashboard
+      </a>
+      <a mat-button routerLink="/prescriptions">
+        <mat-icon>description</mat-icon> Prescriptions
+      </a>
+      <a mat-button color="primary" routerLink="/prescriptions/upload">
+        <mat-icon>add_circle</mat-icon> Upload
+      </a>
+    </nav>
+
+    <!-- User menu -->
+    <div class="toolbar-right">
+      <button mat-icon-button [matMenuTriggerFor]="userMenu"
+              [matTooltip]="userEmail()">
+        <div class="avatar">{{ userInitial() }}</div>
+      </button>
+
+      <mat-menu #userMenu="matMenu" xPosition="before">
+        <div class="menu-header">
+          <mat-icon>account_circle</mat-icon>
+          <span class="menu-email">{{ userEmail() }}</span>
+        </div>
+        <mat-divider />
+        <button mat-menu-item routerLink="/prescriptions">
+          <mat-icon>description</mat-icon> My Prescriptions
+        </button>
+        <button mat-menu-item routerLink="/prescriptions/upload">
+          <mat-icon>upload_file</mat-icon> Upload Prescription
+        </button>
+        <mat-divider />
+        <button mat-menu-item (click)="logout()" class="logout-item">
+          <mat-icon>logout</mat-icon> Sign Out
+        </button>
+      </mat-menu>
+    </div>
+
+  </div>
+</mat-toolbar>
+
+<!-- ══ Page Content ══════════════════════════════════════════════════════════ -->
+<div class="dashboard-page">
+
+  <!-- ── Welcome Banner ───────────────────────────────────────────────────── -->
+  <div class="welcome-banner">
+    <div class="welcome-text">
+      <h1>{{ greet() }}{{ userEmail() ? ', ' + userEmail().split('@')[0] : '' }} 👋</h1>
+      <p>Here's an overview of your health activity.</p>
+    </div>
+    <button mat-raised-button color="primary" routerLink="/prescriptions/upload"
+            class="upload-cta">
+      <mat-icon>add</mat-icon>
+      Upload Prescription
+    </button>
+  </div>
+
+  <!-- ── Stats Grid ───────────────────────────────────────────────────────── -->
+  @if (!loading()) {
+    <div class="stats-grid">
+
+      <mat-card class="stat-card total">
+        <mat-card-content>
+          <div class="stat-icon-wrap">
+            <mat-icon>description</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ total() }}</span>
+            <span class="stat-label">Total Prescriptions</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card analysed">
+        <mat-card-content>
+          <div class="stat-icon-wrap">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ processed() }}</span>
+            <span class="stat-label">Analysed</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card pending">
+        <mat-card-content>
+          <div class="stat-icon-wrap">
+            <mat-icon>hourglass_top</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ processing() }}</span>
+            <span class="stat-label">Processing</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card failed">
+        <mat-card-content>
+          <div class="stat-icon-wrap">
+            <mat-icon>error_outline</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ failed() }}</span>
+            <span class="stat-label">Failed</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+  }
+
+  <!-- ── Main Content Row ─────────────────────────────────────────────────── -->
+  <div class="content-row">
+
+    <!-- Recent Prescriptions -->
+    <mat-card class="recent-card">
+      <mat-card-content>
+        <div class="section-header">
+          <h3><mat-icon>history</mat-icon> Recent Prescriptions</h3>
+          <a mat-button color="primary" routerLink="/prescriptions">View all</a>
+        </div>
+        <mat-divider />
+
+        @if (loading()) {
+          <div class="section-loading">
+            <mat-spinner diameter="32" />
+          </div>
+        } @else if (recent().length === 0) {
+          <div class="section-empty">
+            <mat-icon>upload_file</mat-icon>
+            <p>No prescriptions yet.</p>
+            <a mat-stroked-button color="primary" routerLink="/prescriptions/upload">
+              Upload your first
+            </a>
+          </div>
+        } @else {
+          <div class="recent-list">
+            @for (item of recent(); track item.id) {
+              <div class="recent-item">
+                <div class="recent-file-icon" [class.is-pdf]="item.file_type === 'pdf'">
+                  <mat-icon>{{ fileIcon(item.file_type) }}</mat-icon>
+                </div>
+                <div class="recent-info">
+                  <p class="recent-name" [matTooltip]="item.original_file_name">
+                    {{ item.original_file_name }}
+                  </p>
+                  <p class="recent-meta">
+                    {{ item.file_type.toUpperCase() }} · {{ formatSize(item.file_size) }}
+                    · {{ item.created_at | date:'dd MMM yyyy' }}
+                  </p>
+                </div>
+                <div class="recent-status status-{{ item.upload_status }}">
+                  <mat-icon>{{ statusIcon(item.upload_status) }}</mat-icon>
+                </div>
+                <button mat-icon-button color="primary"
+                        (click)="viewAnalysis(item.id)"
+                        matTooltip="View analysis">
+                  <mat-icon>biotech</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Quick Actions -->
+    <div class="actions-column">
+
+      <mat-card class="quick-actions-card">
+        <mat-card-content>
+          <h3><mat-icon>bolt</mat-icon> Quick Actions</h3>
+          <mat-divider />
+          <div class="quick-actions">
+            <button mat-stroked-button routerLink="/prescriptions/upload" class="qa-btn">
+              <div class="qa-icon upload-qa"><mat-icon>upload_file</mat-icon></div>
+              <span>Upload Prescription</span>
+              <mat-icon class="qa-arrow">chevron_right</mat-icon>
+            </button>
+            <button mat-stroked-button routerLink="/prescriptions" class="qa-btn">
+              <div class="qa-icon list-qa"><mat-icon>list_alt</mat-icon></div>
+              <span>View All Prescriptions</span>
+              <mat-icon class="qa-arrow">chevron_right</mat-icon>
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="disclaimer-dash-card">
+        <mat-card-content>
+          <div class="medical-disclaimer">
+            <mat-icon>warning_amber</mat-icon>
+            <p>This application does not provide medical advice. AI analysis is
+               not a substitute for professional healthcare consultation.</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Mobile Bottom Nav ──────────────────────────────────────────────────── -->
+<nav class="mobile-bottom-nav mobile-only">
+  <a routerLink="/dashboard" class="nav-item active">
+    <mat-icon>dashboard</mat-icon>
+    <span>Home</span>
+  </a>
+  <a routerLink="/prescriptions" class="nav-item">
+    <mat-icon>description</mat-icon>
+    <span>Files</span>
+  </a>
+  <a routerLink="/prescriptions/upload" class="nav-item upload-fab">
+    <mat-icon>add</mat-icon>
+  </a>
+  <button class="nav-item" (click)="logout()">
+    <mat-icon>logout</mat-icon>
+    <span>Logout</span>
+  </button>
+</nav>
+

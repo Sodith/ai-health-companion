@@ -1,0 +1,329 @@
+// ── Page Layout ───────────────────────────────────────────────────────────────
+.list-page {
+  min-height: 100vh;
+  background: var(--bg-app);
+  padding: 24px 16px 48px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 12px;
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 0;
+    }
+    p {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+  }
+
+  button[mat-raised-button] {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+}
+
+// ── Stats Row ─────────────────────────────────────────────────────────────────
+.stats-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.stat-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 6px 16px 6px 10px;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: var(--primary);
+  }
+
+  strong { color: var(--text-primary); }
+
+  &.accent mat-icon { color: var(--accent); }
+  &.warn   mat-icon { color: var(--warn); }
+}
+
+// ── Empty State ───────────────────────────────────────────────────────────────
+.empty-card {
+  mat-card-content { padding: 48px 24px !important; }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+
+  .empty-icon-ring {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e0f2f1, #b2dfdb);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+
+    mat-icon {
+      font-size: 40px;
+      width: 40px;
+      height: 40px;
+      color: var(--primary);
+    }
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    max-width: 360px;
+    margin: 0;
+  }
+
+  button {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+// ── Desktop Table ─────────────────────────────────────────────────────────────
+.table-card {
+  mat-card-content { padding: 0 !important; overflow: hidden; }
+}
+
+.prescription-table {
+  width: 100%;
+
+  th.mat-mdc-header-cell {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    background: #f8fafb;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+
+  td.mat-mdc-cell {
+    vertical-align: middle;
+    padding: 14px 12px;
+    border-bottom: 1px solid #f0f4f5;
+  }
+
+  .table-row {
+    transition: background 0.15s ease;
+    &:hover { background: #f5faf9; }
+  }
+}
+
+// File icon cell
+.file-icon-cell {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, #e0f2f1, #b2dfdb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--primary);
+  }
+
+  &.is-pdf {
+    background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+    mat-icon { color: #c62828; }
+  }
+}
+
+.file-name-cell {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  max-width: 240px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  margin: 0;
+}
+
+.symptoms-preview {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin: 3px 0 0;
+  max-width: 240px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Type badge
+.type-badge {
+  background: #e8f5e9;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+
+// Status badge
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+
+  &.status-processed {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  &.status-processing {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+  &.status-uploaded {
+    background: #fff8e1;
+    color: #f57f17;
+  }
+  &.status-failed {
+    background: #ffebee;
+    color: #c62828;
+  }
+}
+
+.muted {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+// Action buttons
+.action-btns {
+  display: flex;
+  gap: 8px;
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.82rem;
+  }
+}
+
+// ── Responsive helpers ────────────────────────────────────────────────────────
+.desktop-only {
+  @media (max-width: 680px) { display: none; }
+}
+
+.mobile-only {
+  display: none;
+  @media (max-width: 680px) { display: block; }
+}
+
+// ── Mobile Cards ──────────────────────────────────────────────────────────────
+.mobile-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mobile-prescription-card {
+  mat-card-content { padding: 16px !important; }
+
+  .mobile-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .mobile-card-title {
+      flex: 1;
+      min-width: 0;
+      p { margin: 0; }
+    }
+  }
+
+  .mobile-symptoms {
+    margin: 10px 0 0;
+    padding: 6px 10px;
+    background: #f5f5f5;
+    border-radius: var(--radius-sm);
+  }
+
+  .mobile-divider { margin: 12px 0 10px; }
+
+  .mobile-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.82rem;
+    }
+  }
+}
+
+// ── Header responsive ─────────────────────────────────────────────────────────
+@media (max-width: 480px) {
+  .list-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+

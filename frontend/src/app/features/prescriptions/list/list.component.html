@@ -1,0 +1,183 @@
+<app-spinner [loading]="loading()" />
+
+<div class="list-page">
+
+  <!-- ── Header ─────────────────────────────────────────────────────────────── -->
+  <div class="list-header">
+    <div class="header-left">
+      <button mat-icon-button routerLink="/dashboard" matTooltip="Back to dashboard">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h2>My Prescriptions</h2>
+        <p>Manage and analyse your uploaded prescriptions</p>
+      </div>
+    </div>
+    <button mat-raised-button color="primary" routerLink="/prescriptions/upload">
+      <mat-icon>add</mat-icon>
+      Upload New
+    </button>
+  </div>
+
+  <!-- ── Summary Stats ─────────────────────────────────────────────────────── -->
+  @if (!loading()) {
+    <div class="stats-row">
+      <div class="stat-chip">
+        <mat-icon>description</mat-icon>
+        <span><strong>{{ total() }}</strong> Total</span>
+      </div>
+      <div class="stat-chip accent">
+        <mat-icon>check_circle</mat-icon>
+        <span><strong>{{ processed() }}</strong> Analysed</span>
+      </div>
+      <div class="stat-chip warn">
+        <mat-icon>hourglass_top</mat-icon>
+        <span><strong>{{ pending() }}</strong> Pending</span>
+      </div>
+    </div>
+  }
+
+  <!-- ── Empty State ────────────────────────────────────────────────────────── -->
+  @if (!loading() && prescriptions().length === 0) {
+    <mat-card class="empty-card">
+      <mat-card-content>
+        <div class="empty-state">
+          <div class="empty-icon-ring">
+            <mat-icon>upload_file</mat-icon>
+          </div>
+          <h3>No prescriptions yet</h3>
+          <p>Upload your first prescription to get started with AI analysis.</p>
+          <button mat-raised-button color="primary" routerLink="/prescriptions/upload">
+            <mat-icon>add</mat-icon>
+            Upload Prescription
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- ── Desktop Table ─────────────────────────────────────────────────────── -->
+  @if (!loading() && prescriptions().length > 0) {
+    <mat-card class="table-card desktop-only">
+      <mat-card-content>
+        <table mat-table [dataSource]="prescriptions()" class="prescription-table">
+
+          <!-- Icon column -->
+          <ng-container matColumnDef="icon">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let row">
+              <div class="file-icon-cell" [class.is-pdf]="row.file_type === 'pdf'">
+                <mat-icon>{{ fileIcon(row.file_type) }}</mat-icon>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Name column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>File Name</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="file-name-cell" [matTooltip]="row.original_file_name">
+                {{ row.original_file_name }}
+              </span>
+              @if (row.symptoms) {
+                <p class="symptoms-preview">{{ row.symptoms }}</p>
+              }
+            </td>
+          </ng-container>
+
+          <!-- Type column -->
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef>Type</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="type-badge">{{ row.file_type.toUpperCase() }}</span>
+            </td>
+          </ng-container>
+
+          <!-- Size column -->
+          <ng-container matColumnDef="size">
+            <th mat-header-cell *matHeaderCellDef>Size</th>
+            <td mat-cell *matCellDef="let row" class="muted">
+              {{ formatSize(row.file_size) }}
+            </td>
+          </ng-container>
+
+          <!-- Status column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="status-badge status-{{ row.upload_status }}">
+                <mat-icon>{{ statusIcon(row.upload_status) }}</mat-icon>
+                {{ row.upload_status | titlecase }}
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Date column -->
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>Uploaded</th>
+            <td mat-cell *matCellDef="let row" class="muted">
+              {{ row.created_at | date:'dd MMM yyyy, HH:mm' }}
+            </td>
+          </ng-container>
+
+          <!-- Actions column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let row">
+              <div class="action-btns">
+                <button mat-stroked-button color="primary"
+                        (click)="viewAnalysis(row.id)"
+                        matTooltip="View AI analysis">
+                  <mat-icon>biotech</mat-icon>
+                  Analyse
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+              class="table-row"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- ── Mobile Card List ─────────────────────────────────────────────────── -->
+    <div class="mobile-only mobile-cards">
+      @for (row of prescriptions(); track row.id) {
+        <mat-card class="mobile-prescription-card">
+          <mat-card-content>
+            <div class="mobile-card-header">
+              <div class="file-icon-cell" [class.is-pdf]="row.file_type === 'pdf'">
+                <mat-icon>{{ fileIcon(row.file_type) }}</mat-icon>
+              </div>
+              <div class="mobile-card-title">
+                <p class="file-name-cell">{{ row.original_file_name }}</p>
+                <p class="muted">{{ formatSize(row.file_size) }} · {{ row.file_type.toUpperCase() }}</p>
+              </div>
+              <div class="status-badge status-{{ row.upload_status }}">
+                <mat-icon>{{ statusIcon(row.upload_status) }}</mat-icon>
+              </div>
+            </div>
+
+            @if (row.symptoms) {
+              <p class="symptoms-preview mobile-symptoms">{{ row.symptoms }}</p>
+            }
+
+            <mat-divider class="mobile-divider" />
+
+            <div class="mobile-card-footer">
+              <span class="muted">{{ row.created_at | date:'dd MMM yyyy' }}</span>
+              <button mat-stroked-button color="primary" (click)="viewAnalysis(row.id)">
+                <mat-icon>biotech</mat-icon>
+                Analyse
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+
+</div>
+

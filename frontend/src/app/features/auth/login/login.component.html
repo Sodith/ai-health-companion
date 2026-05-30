@@ -1,0 +1,71 @@
+<div class="auth-page">
+  <mat-card class="auth-card">
+
+    <!-- Logo & Heading -->
+    <div class="auth-logo">
+      <mat-icon>favorite</mat-icon>
+      <h1>AI Health Companion</h1>
+      <p>Sign in to your account</p>
+    </div>
+
+    <!-- Form -->
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+      <!-- Email -->
+      <mat-form-field appearance="outline">
+        <mat-label>Email address</mat-label>
+        <input matInput type="email" formControlName="email"
+               placeholder="you@example.com" autocomplete="email" />
+        <mat-icon matPrefix>email</mat-icon>
+        @if (email.hasError('required') && email.touched) {
+          <mat-error>Email is required.</mat-error>
+        } @else if (email.hasError('email') && email.touched) {
+          <mat-error>Please enter a valid email address.</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Password -->
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput [type]="hidePassword() ? 'password' : 'text'"
+               formControlName="password" autocomplete="current-password" />
+        <mat-icon matPrefix>lock</mat-icon>
+        <button mat-icon-button matSuffix type="button"
+                (click)="hidePassword.set(!hidePassword())"
+                [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'">
+          <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (password.hasError('required') && password.touched) {
+          <mat-error>Password is required.</mat-error>
+        } @else if (password.hasError('minlength') && password.touched) {
+          <mat-error>Password must be at least 8 characters.</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Submit -->
+      <div class="auth-actions">
+        <button mat-raised-button color="primary" type="submit"
+                [disabled]="form.invalid || loading()">
+          @if (loading()) {
+            <mat-spinner diameter="22" />
+          } @else {
+            <ng-container>
+              <mat-icon>login</mat-icon>
+              Sign In
+            </ng-container>
+          }
+        </button>
+      </div>
+
+    </form>
+
+    <!-- Footer -->
+    <div class="auth-footer">
+      Don't have an account?&nbsp;
+      <a routerLink="/auth/signup">Create one here</a>
+    </div>
+
+  </mat-card>
+</div>
+
+

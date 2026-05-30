@@ -1,0 +1,103 @@
+<div class="auth-page">
+  <mat-card class="auth-card">
+
+    <!-- Logo & Heading -->
+    <div class="auth-logo">
+      <mat-icon>favorite</mat-icon>
+      <h1>AI Health Companion</h1>
+      <p>Create your free account</p>
+    </div>
+
+    <!-- Form -->
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+      <!-- Email -->
+      <mat-form-field appearance="outline">
+        <mat-label>Email address</mat-label>
+        <input matInput type="email" formControlName="email"
+               placeholder="you@example.com" autocomplete="email" />
+        <mat-icon matPrefix>email</mat-icon>
+        @if (email.hasError('required') && email.touched) {
+          <mat-error>Email is required.</mat-error>
+        } @else if (email.hasError('email') && email.touched) {
+          <mat-error>Please enter a valid email address.</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Password -->
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput [type]="hidePassword() ? 'password' : 'text'"
+               formControlName="password" autocomplete="new-password" />
+        <mat-icon matPrefix>lock</mat-icon>
+        <button mat-icon-button matSuffix type="button"
+                (click)="hidePassword.set(!hidePassword())"
+                [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'">
+          <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (password.hasError('required') && password.touched) {
+          <mat-error>Password is required.</mat-error>
+        } @else if (password.hasError('minlength') && password.touched) {
+          <mat-error>Minimum 8 characters required.</mat-error>
+        } @else if (password.hasError('pattern') && password.touched) {
+          <mat-error>Must include uppercase, lowercase, number &amp; special character.</mat-error>
+        }
+        @if (password.value && !password.hasError('required')) {
+          <mat-hint>
+            Strength:&nbsp;
+            <span [class]="'strength-' + strengthClass">{{ passwordStrengthHint }}</span>
+          </mat-hint>
+        }
+      </mat-form-field>
+
+      <!-- Confirm Password -->
+      <mat-form-field appearance="outline">
+        <mat-label>Confirm password</mat-label>
+        <input matInput [type]="hideConfirmPw() ? 'password' : 'text'"
+               formControlName="confirmPassword" autocomplete="new-password" />
+        <mat-icon matPrefix>lock_outline</mat-icon>
+        <button mat-icon-button matSuffix type="button"
+                (click)="hideConfirmPw.set(!hideConfirmPw())"
+                [attr.aria-label]="hideConfirmPw() ? 'Show' : 'Hide'">
+          <mat-icon>{{ hideConfirmPw() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (confirmPassword.hasError('required') && confirmPassword.touched) {
+          <mat-error>Please confirm your password.</mat-error>
+        } @else if (form.hasError('passwordMismatch') && confirmPassword.touched) {
+          <mat-error>Passwords do not match.</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Password rules hint -->
+      <div class="password-rules">
+        <mat-icon>info_outline</mat-icon>
+        <span>Password must contain uppercase, lowercase, digit &amp; special character (min 8 chars).</span>
+      </div>
+
+      <!-- Submit -->
+      <div class="auth-actions">
+        <button mat-raised-button color="primary" type="submit"
+                [disabled]="form.invalid || loading()">
+          @if (loading()) {
+            <mat-spinner diameter="22" />
+          } @else {
+            <ng-container>
+              <mat-icon>person_add</mat-icon>
+              Create Account
+            </ng-container>
+          }
+        </button>
+      </div>
+
+    </form>
+
+    <!-- Footer -->
+    <div class="auth-footer">
+      Already have an account?&nbsp;
+      <a routerLink="/auth/login">Sign in here</a>
+    </div>
+
+  </mat-card>
+</div>
+
+

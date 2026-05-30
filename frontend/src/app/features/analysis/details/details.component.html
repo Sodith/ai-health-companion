@@ -1,0 +1,211 @@
+<app-spinner [loading]="loading()" />
+
+<div class="details-page">
+
+  <!-- ── Top Bar ──────────────────────────────────────────────────────────── -->
+  <div class="page-topbar">
+    <button mat-icon-button routerLink="/prescriptions" matTooltip="Back to prescriptions">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="topbar-title">
+      <h2>AI Analysis Results</h2>
+      <p>Prescription #{{ prescriptionId() }}</p>
+    </div>
+    @if (analysis()) {
+      <button mat-stroked-button color="primary" (click)="retry()"
+              matTooltip="Re-run analysis" class="retry-btn">
+        <mat-icon>refresh</mat-icon>
+        Re-analyse
+      </button>
+    }
+  </div>
+
+  <!-- ── Loading placeholder ──────────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="loading-placeholder">
+      <mat-spinner diameter="48" />
+      <p>Running AI analysis on your prescription…</p>
+    </div>
+  }
+
+  <!-- ── Results ──────────────────────────────────────────────────────────── -->
+  @if (!loading() && analysis(); as data) {
+
+    <!-- Medical disclaimer — always first -->
+    <app-medical-disclaimer />
+
+    <!-- ── Status Banner ──────────────────────────────────────────────────── -->
+    <div class="status-banner {{ statusClass(data.analysis_status) }}">
+      <mat-icon>{{ statusIcon(data.analysis_status) }}</mat-icon>
+      <div>
+        <strong>Status: {{ data.analysis_status | titlecase }}</strong>
+        <span>· Analysed {{ data.created_at | date:'dd MMM yyyy, HH:mm' }}</span>
+      </div>
+    </div>
+
+    <div class="results-grid">
+
+      <!-- ── Disease Detected ─────────────────────────────────────────────── -->
+      <mat-card class="result-card disease-card">
+        <mat-card-content>
+          <div class="card-header-row">
+            <div class="card-icon disease-icon">
+              <mat-icon>coronavirus</mat-icon>
+            </div>
+            <h3>Disease / Condition Detected</h3>
+          </div>
+          <mat-divider />
+          @if (data.disease_detected) {
+            <p class="disease-text">{{ data.disease_detected }}</p>
+          } @else {
+            <p class="no-data">No specific disease detected from this prescription.</p>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <!-- ── Medicines ─────────────────────────────────────────────────────── -->
+      <mat-card class="result-card medicines-card">
+        <mat-card-content>
+          <div class="card-header-row">
+            <div class="card-icon medicine-icon">
+              <mat-icon>medication</mat-icon>
+            </div>
+            <h3>Prescribed Medicines
+              <span class="count-badge">{{ data.medicines.length }}</span>
+            </h3>
+          </div>
+          <mat-divider />
+
+          @if (data.medicines.length === 0) {
+            <p class="no-data">No medicines extracted from this prescription.</p>
+          } @else {
+            <div class="medicines-list">
+              @for (med of data.medicines; track med.id) {
+                <div class="medicine-item">
+                  <div class="medicine-header">
+                    <mat-icon class="med-icon">local_pharmacy</mat-icon>
+                    <strong class="med-name">{{ med.medicine_name }}</strong>
+                  </div>
+                  <div class="medicine-details">
+                    @if (med.dosage) {
+                      <div class="med-detail">
+                        <mat-icon>scale</mat-icon>
+                        <span><em>Dosage:</em> {{ med.dosage }}</span>
+                      </div>
+                    }
+                    @if (med.frequency) {
+                      <div class="med-detail">
+                        <mat-icon>schedule</mat-icon>
+                        <span><em>Frequency:</em> {{ med.frequency }}</span>
+                      </div>
+                    }
+                    @if (med.duration) {
+                      <div class="med-detail">
+                        <mat-icon>date_range</mat-icon>
+                        <span><em>Duration:</em> {{ med.duration }}</span>
+                      </div>
+                    }
+                    @if (med.notes) {
+                      <div class="med-detail notes">
+                        <mat-icon>info_outline</mat-icon>
+                        <span>{{ med.notes }}</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <!-- ── Doctor Advice ──────────────────────────────────────────────────── -->
+      <mat-card class="result-card advice-card">
+        <mat-card-content>
+          <div class="card-header-row">
+            <div class="card-icon advice-icon">
+              <mat-icon>medical_services</mat-icon>
+            </div>
+            <h3>Doctor's Advice</h3>
+          </div>
+          <mat-divider />
+
+          @if (data.doctor_advice.length === 0) {
+            <p class="no-data">No doctor advice extracted.</p>
+          } @else {
+            <ul class="advice-list">
+              @for (item of data.doctor_advice; track $index) {
+                <li>
+                  <mat-icon>check_circle_outline</mat-icon>
+                  <span>{{ item }}</span>
+                </li>
+              }
+            </ul>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <!-- ── Lifestyle Recommendations ──────────────────────────────────────── -->
+      <mat-card class="result-card lifestyle-card">
+        <mat-card-content>
+          <div class="card-header-row">
+            <div class="card-icon lifestyle-icon">
+              <mat-icon>self_improvement</mat-icon>
+            </div>
+            <h3>Lifestyle Recommendations</h3>
+          </div>
+          <mat-divider />
+
+          @if (data.lifestyle_changes.length === 0) {
+            <p class="no-data">No lifestyle recommendations extracted.</p>
+          } @else {
+            <ul class="lifestyle-list">
+              @for (item of data.lifestyle_changes; track $index) {
+                <li>
+                  <mat-icon>favorite_border</mat-icon>
+                  <span>{{ item }}</span>
+                </li>
+              }
+            </ul>
+          }
+        </mat-card-content>
+      </mat-card>
+
+    </div><!-- /results-grid -->
+
+    <!-- ── Disclaimer footer ─────────────────────────────────────────────── -->
+    <div class="disclaimer-footer">
+      <mat-icon>gpp_maybe</mat-icon>
+      <p>{{ data.disclaimer }}</p>
+    </div>
+
+  }<!-- /if analysis -->
+
+  <!-- ── No result / error state ──────────────────────────────────────────── -->
+  @if (!loading() && !analysis()) {
+    <mat-card class="error-card">
+      <mat-card-content>
+        <div class="error-state">
+          <div class="error-icon-ring">
+            <mat-icon>sentiment_dissatisfied</mat-icon>
+          </div>
+          <h3>Analysis not available</h3>
+          <p>The analysis could not be loaded. This may be because the
+             prescription is still processing or an error occurred.</p>
+          <div class="error-actions">
+            <button mat-stroked-button routerLink="/prescriptions">
+              <mat-icon>arrow_back</mat-icon>
+              Back to list
+            </button>
+            <button mat-raised-button color="primary" (click)="retry()">
+              <mat-icon>refresh</mat-icon>
+              Try again
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+</div>
+

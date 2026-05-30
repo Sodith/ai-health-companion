@@ -1,1 +1,223 @@
-/* You can add global styles to this file, and also import other style files */
+// ─── Angular Material Core ───────────────────────────────────────────────────
+@use '@angular/material' as mat;
+
+// ─── Healthcare Custom Palette ───────────────────────────────────────────────
+// Primary: Teal (trust, health, calm)
+$health-primary: mat.m2-define-palette(mat.$m2-teal-palette, 700, 400, 900);
+// Accent: Green (vitality, wellness)
+$health-accent: mat.m2-define-palette(mat.$m2-green-palette, 600, 300, 800);
+// Warn: Red
+$health-warn: mat.m2-define-palette(mat.$m2-red-palette);
+
+// ─── Theme ───────────────────────────────────────────────────────────────────
+$health-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $health-primary,
+    accent:  $health-accent,
+    warn:    $health-warn,
+  ),
+  typography: mat.m2-define-typography-config(
+    $font-family: "'Inter', 'Roboto', sans-serif",
+  ),
+  density: 0,
+));
+
+// ─── Apply Theme ─────────────────────────────────────────────────────────────
+@include mat.all-component-themes($health-theme);
+
+// ─── Google Fonts ─────────────────────────────────────────────────────────────
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+// ─── CSS Custom Properties ───────────────────────────────────────────────────
+:root {
+  --primary:         #00695c;   // teal-700
+  --primary-light:   #26a69a;   // teal-400
+  --primary-dark:    #004d40;   // teal-900
+  --accent:          #43a047;   // green-600
+  --warn:            #e53935;
+  --bg-app:          #f0f4f5;
+  --bg-card:         #ffffff;
+  --text-primary:    #1a2332;
+  --text-secondary:  #546e7a;
+  --border:          #cfd8dc;
+  --shadow-sm:       0 1px 4px rgba(0,0,0,.08);
+  --shadow-md:       0 4px 16px rgba(0,0,0,.12);
+  --shadow-lg:       0 8px 32px rgba(0,0,0,.16);
+  --radius-sm:       6px;
+  --radius-md:       12px;
+  --radius-lg:       20px;
+}
+
+// ─── Global Reset & Base ─────────────────────────────────────────────────────
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', 'Roboto', sans-serif;
+  font-size: 16px;
+  color: var(--text-primary);
+  background-color: var(--bg-app);
+  -webkit-font-smoothing: antialiased;
+}
+
+// ─── Typography Helpers ──────────────────────────────────────────────────────
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+p { line-height: 1.6; color: var(--text-secondary); }
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  &:hover { text-decoration: underline; }
+}
+
+// ─── Material Component Overrides ────────────────────────────────────────────
+.mat-mdc-card {
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+.mat-mdc-raised-button.mat-primary {
+  border-radius: var(--radius-sm) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+}
+
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-snack-bar-container {
+  &.snack-success .mdc-snackbar__surface { background: #2e7d32; color: #fff; }
+  &.snack-error   .mdc-snackbar__surface { background: #c62828; color: #fff; }
+  &.snack-info    .mdc-snackbar__surface { background: #00695c; color: #fff; }
+}
+
+// ─── Layout Utilities ────────────────────────────────────────────────────────
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-wrapper {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.full-height { height: 100%; }
+
+// ─── Auth Page Layout ────────────────────────────────────────────────────────
+.auth-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+
+  .auth-card {
+    width: 100%;
+    max-width: 440px;
+    padding: 40px 36px;
+    border-radius: var(--radius-lg) !important;
+    box-shadow: var(--shadow-lg) !important;
+
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 24px;
+
+      mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        color: var(--primary);
+      }
+
+      h1 {
+        font-size: 1.6rem;
+        color: var(--primary);
+        margin-top: 8px;
+      }
+
+      p {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-top: 4px;
+      }
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .auth-actions {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      button { width: 100%; height: 48px; font-size: 1rem; }
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+
+      a { color: var(--primary); font-weight: 600; }
+    }
+  }
+}
+
+// ─── Medical Disclaimer ──────────────────────────────────────────────────────
+.medical-disclaimer {
+  background: linear-gradient(90deg, #fff3e0, #fff8e1);
+  border-left: 4px solid #f57c00;
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  mat-icon { color: #f57c00; flex-shrink: 0; margin-top: 1px; }
+
+  p {
+    font-size: 0.85rem;
+    color: #5d4037;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+// ─── Responsive Breakpoints ──────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .content-wrapper { padding: 16px 12px; }
+
+  .auth-page .auth-card { padding: 28px 20px; }
+}
+
+@media (max-width: 480px) {
+  .auth-page .auth-card { padding: 24px 16px; }
+}
+

@@ -1,0 +1,46 @@
+.auth-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  mat-spinner { display: inline-block; }
+}
+
+mat-icon[matPrefix] {
+  margin-right: 4px;
+  color: var(--text-secondary);
+}
+
+// ── Password strength indicator ──────────────────────────────────────────────
+.strength-weak   { color: var(--warn);    font-weight: 600; }
+.strength-fair   { color: #f57c00;        font-weight: 600; }
+.strength-good   { color: #689f38;        font-weight: 600; }
+.strength-strong { color: var(--accent);  font-weight: 600; }
+
+// ── Password rules hint ──────────────────────────────────────────────────────
+.password-rules {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  background: #e3f2fd;
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  margin-top: -4px;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #1565c0;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  span {
+    font-size: 0.78rem;
+    color: #1565c0;
+    line-height: 1.4;
+  }
+}
+
