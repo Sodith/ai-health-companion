@@ -8,6 +8,7 @@ Startup order:
 """
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.controllers.auth_controller import router as auth_router
 from app.controllers.prescription_controller import router as prescription_router
@@ -31,8 +32,25 @@ app = FastAPI(
 # --- Global exception handlers -------------------------------------------
 register_exception_handlers(app)
 
-# --- Middleware --------------------------------------------------------------
+# ── Middleware order note ────────────────────────────────────────────────────
+# FastAPI/Starlette applies middleware in LIFO order (last added = first run).
+# CORS must run FIRST (before JWT) so that OPTIONS preflight requests are
+# answered with the correct headers and never reach the auth check.
+# Therefore: add JWTAuthMiddleware first, CORSMiddleware second.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# --- Auth Middleware (added first → runs SECOND) ----------------------------
 app.add_middleware(JWTAuthMiddleware)
+
+# --- CORS Middleware (added last → runs FIRST) ------------------------------
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # --- Routers -----------------------------------------------------------------
 app.include_router(auth_router, prefix="/api/v1")
