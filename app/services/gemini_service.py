@@ -96,8 +96,9 @@ _GENERATION_CONFIG = genai_types.GenerateContentConfig(
     system_instruction=_SYSTEM_INSTRUCTION,
     temperature=0.1,
     top_p=0.95,
-    max_output_tokens=2048,
+    max_output_tokens=8192,
     response_mime_type="application/json",
+    thinking_config=genai_types.ThinkingConfig(thinking_budget=0),
 )
 
 # ---------------------------------------------------------------------------
@@ -322,6 +323,13 @@ def analyze_prescription(
         logger.error("Gemini quota exceeded: %s", exc)
         raise AppException(
             message="AI service quota exceeded. Please try again later.",
+            status_code=503,
+            error="SERVICE_UNAVAILABLE",
+        ) from exc
+    except google_exceptions.ServiceUnavailable as exc:
+        logger.error("Gemini service unavailable: %s", exc)
+        raise AppException(
+            message="AI service is temporarily unavailable. Please try again later.",
             status_code=503,
             error="SERVICE_UNAVAILABLE",
         ) from exc

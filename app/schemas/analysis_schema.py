@@ -35,7 +35,7 @@ import json
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 # ---------------------------------------------------------------------------
@@ -118,7 +118,7 @@ class AnalysisResponse(BaseModel):
     """
 
 
-    analysis_id: int = Field(..., alias="id", description="Analysis primary key.")
+    analysis_id: int = Field(..., description="Analysis primary key.")
     prescription_id: int = Field(..., description="FK to the analyzed prescription.")
     analysis_status: str = Field(..., description="pending | processing | completed | failed.")
 
@@ -151,6 +151,24 @@ class AnalysisResponse(BaseModel):
     # Validators — transparently deserialize JSON-text list fields
     # ------------------------------------------------------------------
 
+    @model_validator(mode="before")
+    @classmethod
+    def map_id_to_analysis_id(cls, data: Any) -> Any:
+        """Map ORM ``id`` attribute → ``analysis_id`` field.
+
+        When constructed from an ORM object (from_attributes=True), the
+        AIAnalysis row has ``id`` not ``analysis_id``.  This validator
+        transparently remaps it so no alias is needed.
+        """
+        if isinstance(data, dict):
+            if "id" in data and "analysis_id" not in data:
+                data["analysis_id"] = data["id"]
+        elif hasattr(data, "id") and not hasattr(data, "analysis_id"):
+            # ORM object path
+            object.__setattr__(data, "analysis_id", data.id) \
+                if hasattr(data, "__dict__") else None
+        return data
+
     @field_validator("doctor_advice", mode="before")
     @classmethod
     def parse_doctor_advice(cls, v: Any) -> list[str]:
@@ -165,7 +183,6 @@ class AnalysisResponse(BaseModel):
 
     model_config = ConfigDict(
         from_attributes=True,
-        populate_by_name=True,   # allows both 'id' and 'analysis_id' alias
     )
 
 
