@@ -63,7 +63,8 @@ _MODEL = "gemini-2.5-flash"
 _SYSTEM_INSTRUCTION = """You are a medical document analysis AI.
 Your ONLY task is to analyze the uploaded prescription image or document and the patient's reported symptoms.
 You MUST return a single valid JSON object and nothing else.
-Rules:
+
+Output rules:
 - No markdown.
 - No code fences (no ```json).
 - No explanation text before or after the JSON.
@@ -72,7 +73,7 @@ Rules:
 
 Required JSON schema:
 {
-  "disease_detected": "string or null",
+  "disease_detected": "string",
   "doctor_advice": ["string"],
   "lifestyle_changes": ["string"],
   "medicines": [
@@ -86,8 +87,36 @@ Required JSON schema:
   ]
 }
 
-If a field cannot be determined from the prescription, use null for string fields or [] for array fields.
-Never invent information that is not present in the prescription."""
+Field rules — follow STRICTLY:
+
+1. "disease_detected" (REQUIRED — never null, never empty string):
+   - If the disease/condition is explicitly written on the prescription, use it.
+   - If NOT explicitly written, INFER the most likely condition from the medicines prescribed.
+     For example: Metformin + Glipizide → "Type 2 Diabetes Mellitus";
+                  Amlodipine + Telmisartan → "Hypertension";
+                  Amoxicillin → "Bacterial Infection".
+   - If multiple conditions are inferred, list them comma-separated.
+   - NEVER return null or an empty string for this field.
+
+2. "lifestyle_changes" (REQUIRED — must have at least 3 items):
+   - Always provide practical lifestyle recommendations relevant to the detected disease and medicines.
+   - Base recommendations on the inferred or detected condition.
+   - Examples for diabetes: "Follow a low-sugar, low-carbohydrate diet",
+     "Exercise for at least 30 minutes daily", "Monitor blood glucose daily".
+   - Examples for hypertension: "Reduce salt intake to less than 5g per day",
+     "Avoid smoking and limit alcohol", "Practice stress-reduction techniques".
+   - NEVER return an empty array. Always include at least 3 actionable recommendations.
+
+3. "doctor_advice" (REQUIRED — must have at least 2 items):
+   - Always include specific advice about taking the prescribed medicines correctly.
+   - Include follow-up instructions if inferable.
+   - NEVER return an empty array.
+
+4. "medicines" — extract all medicines visible in the prescription image.
+   - Use null only for individual optional sub-fields (dosage, frequency, duration, notes)
+     when genuinely not readable.
+
+Never invent medicine names that are not present in the prescription image."""
 
 # ---------------------------------------------------------------------------
 # Generation config — near-deterministic, hard output cap

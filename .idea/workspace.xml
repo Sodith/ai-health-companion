@@ -4,7 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="24494f09-0fd6-4153-b81e-6fc815fb6e52" name="Changes" comment="full completed" />
+    <list default="true" id="24494f09-0fd6-4153-b81e-6fc815fb6e52" name="Changes" comment="full completed 1">
+      <change afterPath="$PROJECT_DIR$/.env.ec2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/EC2-DEPLOYMENT-GUIDE.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/.env.ec2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/aws-deploy.ps1" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/ec2_deploy_app.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/ec2_deploy_windows.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/ec2_provision.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/schemas/prescription_schema.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/schemas/prescription_schema.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/services/gemini_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/gemini_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/services/prescription_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/prescription_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/prescriptions/list/list.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/prescriptions/list/list.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/shared/models/prescription.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/shared/models/prescription.model.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/environments/environment.prod.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/environments/environment.prod.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -180,7 +199,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780210929759</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="full completed 1">
+      <option name="closed" value="true" />
+      <created>1780211521606</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1780211521606</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -192,7 +219,8 @@
     <MESSAGE value="working" />
     <MESSAGE value="working phase 5 c" />
     <MESSAGE value="full completed" />
-    <option name="LAST_COMMIT_MESSAGE" value="full completed" />
+    <MESSAGE value="full completed 1" />
+    <option name="LAST_COMMIT_MESSAGE" value="full completed 1" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

@@ -62,6 +62,7 @@ class PrescriptionListItem(BaseModel):
     file_size: int = Field(..., description="File size in bytes.")
     symptoms: str | None = Field(None, description="Free-text health notes supplied by the user.")
     upload_status: str = Field(..., description="Current lifecycle status of the upload.")
+    analysis_status: str | None = Field(None, description="AI analysis status: pending | processing | completed | failed | None if not yet triggered.")
     created_at: datetime
 
 

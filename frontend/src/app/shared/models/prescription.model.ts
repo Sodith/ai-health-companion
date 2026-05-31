@@ -13,6 +13,7 @@ export interface PrescriptionListItem {
   file_size: number;
   symptoms: string | null;
   upload_status: string;
+  analysis_status: string | null;
   created_at: string;
 }
 

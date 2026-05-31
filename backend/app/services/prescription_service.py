@@ -19,6 +19,7 @@ from __future__ import annotations
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
+from app.models.analysis_model import AIAnalysis
 from app.models.prescription_model import Prescription
 from app.schemas.prescription_schema import (
     PrescriptionDetail,
@@ -133,7 +134,19 @@ def get_user_prescriptions(
         .order_by(Prescription.created_at.desc())
         .all()
     )
-    return [PrescriptionListItem.model_validate(row) for row in rows]
+
+    items = []
+    for row in rows:
+        # Look up analysis status for this prescription (None if never triggered)
+        analysis = (
+            db.query(AIAnalysis)
+            .filter(AIAnalysis.prescription_id == row.id)
+            .first()
+        )
+        item = PrescriptionListItem.model_validate(row)
+        item.analysis_status = analysis.analysis_status if analysis else None
+        items.append(item)
+    return items
 
 
 # ---------------------------------------------------------------------------

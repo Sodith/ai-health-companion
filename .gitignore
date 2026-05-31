@@ -2,6 +2,8 @@
 .env
 .env.local
 .env.*.local
+.env.ec2
+backend/.env.ec2
 
 # ─── OS noise ────────────────────────────────────────────────────────────────
 .DS_Store

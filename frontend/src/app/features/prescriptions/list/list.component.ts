@@ -49,8 +49,8 @@ export class ListComponent implements OnInit {
   displayedColumns = ['icon', 'name', 'type', 'size', 'status', 'date', 'actions'];
 
   total     = computed(() => this.prescriptions().length);
-  processed = computed(() => this.prescriptions().filter(p => p.upload_status === 'processed').length);
-  pending   = computed(() => this.prescriptions().filter(p => p.upload_status !== 'processed').length);
+  processed = computed(() => this.prescriptions().filter(p => p.analysis_status === 'completed').length);
+  pending   = computed(() => this.prescriptions().filter(p => p.analysis_status !== 'completed').length);
 
   ngOnInit(): void {
     this.loadPrescriptions();

@@ -55,9 +55,9 @@ export class DashboardComponent implements OnInit {
 
   // ── Stats (computed from prescriptions signal) ─────────────────────────
   total      = computed(() => this.prescriptions().length);
-  processed  = computed(() => this.prescriptions().filter(p => p.upload_status === 'processed').length);
-  processing = computed(() => this.prescriptions().filter(p => p.upload_status === 'processing').length);
-  failed     = computed(() => this.prescriptions().filter(p => p.upload_status === 'failed').length);
+  processed  = computed(() => this.prescriptions().filter(p => p.analysis_status === 'completed').length);
+  processing = computed(() => this.prescriptions().filter(p => p.analysis_status === 'processing').length);
+  failed     = computed(() => this.prescriptions().filter(p => p.analysis_status === 'failed').length);
 
   // ── Recent (latest 5) ──────────────────────────────────────────────────
   recent = computed(() =>
