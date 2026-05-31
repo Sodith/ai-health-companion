@@ -1,6 +1,7 @@
 """Application settings loaded from environment variables."""
 
 from functools import lru_cache
+from typing import List
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -36,6 +37,13 @@ class Settings(BaseSettings):
 
 	# Gemini AI
 	gemini_api_key: str = Field(default="", alias="GEMINI_API_KEY")
+
+	# CORS — JSON array of allowed origins (e.g. '["http://localhost","http://localhost:4200"]')
+	cors_origins: List[str] = Field(
+		default=["http://localhost", "http://localhost:4200"],
+		alias="CORS_ORIGINS",
+	)
+
 
 
 @lru_cache(maxsize=1)

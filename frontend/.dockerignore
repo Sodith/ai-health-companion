@@ -1,0 +1,23 @@
+# ─── Node modules (largest dir — never ship to Docker) ───────────────────────
+node_modules/
+
+# ─── Angular build output ────────────────────────────────────────────────────
+dist/
+
+# ─── Testing artefacts ───────────────────────────────────────────────────────
+coverage/
+.nyc_output/
+test-out.txt
+test-results.txt
+test-stderr.txt
+test-stdout.txt
+
+# ─── IDE / OS noise ──────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.DS_Store
+Thumbs.db
+
+# ─── Docs ────────────────────────────────────────────────────────────────────
+README.md
+

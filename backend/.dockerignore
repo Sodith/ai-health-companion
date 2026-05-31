@@ -1,0 +1,52 @@
+# ─── Secrets — never bake into the image ────────────────────────────────────
+.env
+.env.*
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+
+# ─── Virtual environments ────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+.env.local
+.env.*.local
+
+# ─── Distribution / packaging ────────────────────────────────────────────────
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ─── Testing & coverage ──────────────────────────────────────────────────────
+tests/
+.pytest_cache/
+pytest.ini
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+
+# ─── Uploaded files (mounted as Docker volume at runtime) ────────────────────
+uploads/
+
+# ─── IDE / OS noise ──────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.DS_Store
+Thumbs.db
+
+# ─── Docs / markdown ─────────────────────────────────────────────────────────
+README.md
+# Exclude log/doc text files but NOT requirements.txt
+*.log
+ai\ health\ document.txt
+backend-log*.txt
+frontend-log*.txt
+
+
+
