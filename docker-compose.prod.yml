@@ -1,0 +1,74 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  AI Health Companion – Production Docker Compose Override
+#
+#  Usage (EC2):
+#    docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+#  Key differences from base compose:
+#    • MySQL port NOT exposed to the host (internal network only)
+#    • Backend port NOT exposed directly (nginx fronts everything on :80)
+#    • Resource limits applied to all services
+#    • Stricter restart policy
+#    • Log rotation configured
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── MySQL ──────────────────────────────────────────────────────────────────
+  mysql:
+    # Do NOT publish MySQL port to the host in production
+    ports: !reset []
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512M
+        reservations:
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ── FastAPI Backend ────────────────────────────────────────────────────────
+  backend:
+    # Port 8000 is only reachable within the Docker network (nginx proxies it)
+    ports: !reset []
+    restart: always
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      # Allow requests originating from the nginx container / public domain
+      # Override in .env with your actual EC2 public IP / domain
+      CORS_ORIGINS: '["http://${EC2_PUBLIC_IP:-localhost}","https://${DOMAIN:-localhost}"]'
+    deploy:
+      resources:
+        limits:
+          cpus: "1.00"
+          memory: 512M
+        reservations:
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # ── Angular Frontend (nginx) ───────────────────────────────────────────────
+  frontend:
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 128M
+        reservations:
+          memory: 64M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+

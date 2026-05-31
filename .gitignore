@@ -16,3 +16,19 @@ Thumbs.db
 backend-log*.txt
 frontend-log*.txt
 
+# ─── Backups (DB dumps) ───────────────────────────────────────────────────────
+backups/
+
+# ─── Upload files (user data) ─────────────────────────────────────────────────
+backend/uploads/
+
+# ─── Python cache ─────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# ─── Node / Angular ───────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
