@@ -1,474 +1,679 @@
 # 🏥 AI Health Companion
 
-> **Disclaimer:** This application is for informational purposes only and does **not** constitute medical advice. Always consult a qualified healthcare professional for medical decisions.
+> **A production-ready, full-stack AI-powered healthcare application** that enables patients to upload prescriptions, describe symptoms, and receive structured AI-generated medical analysis powered by Google Gemini.
 
-An AI-powered health companion that lets patients upload prescriptions and describe symptoms to receive structured, AI-generated health summaries — including prescribed medicines, dosage schedules, doctor's advice, and lifestyle recommendations.
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi)](https://fastapi.tiangolo.com)
+[![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular)](https://angular.io)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql)](https://www.mysql.com)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)](https://docs.docker.com/compose)
+[![AWS EC2](https://img.shields.io/badge/AWS-EC2-FF9900?logo=amazonaws)](https://aws.amazon.com/ec2)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python)](https://www.python.org)
 
 ---
 
-## Table of Contents
+## 📋 Table of Contents
 
 1. [Project Overview](#1-project-overview)
-2. [Architecture](#2-architecture)
-3. [Features](#3-features)
-4. [Local Setup](#4-local-setup)
-5. [Docker Setup](#5-docker-setup)
-6. [EC2 Deployment](#6-ec2-deployment)
-7. [Environment Variables](#7-environment-variables)
-8. [API Documentation](#8-api-documentation)
-9. [Assumptions & Trade-offs](#9-assumptions--trade-offs)
-10. [Future Improvements](#10-future-improvements)
+2. [Problem Statement](#2-problem-statement)
+3. [Features Implemented](#3-features-implemented)
+4. [Tech Stack](#4-tech-stack)
+5. [System Architecture](#5-system-architecture)
+6. [Project Structure](#6-project-structure)
+7. [Database Schema Overview](#7-database-schema-overview)
+8. [Environment Variables](#8-environment-variables)
+9. [Local Development Setup](#9-local-development-setup)
+10. [Docker Setup](#10-docker-setup)
+11. [EC2 Deployment Runbook](#11-ec2-deployment-runbook)
+12. [API Documentation](#12-api-documentation)
+13. [Security Considerations](#13-security-considerations)
+14. [Design Decisions](#14-design-decisions)
+15. [Trade-offs](#15-trade-offs)
+16. [Future Enhancements](#16-future-enhancements)
+17. [Disclaimer](#17-disclaimer)
+18. [Screenshots](#18-screenshots)
+19. [Author Information](#19-author-information)
 
 ---
 
 ## 1. Project Overview
 
-| Layer      | Technology                        |
-|------------|-----------------------------------|
-| Frontend   | Angular 21 served by nginx        |
-| Backend    | FastAPI (Python 3.12)             |
-| Database   | MySQL 8.0                         |
-| AI         | Google Gemini API (free tier)     |
-| Auth       | JWT (HS256, bcrypt password hash) |
-| Storage    | Docker named volume (local disk)  |
-| Containers | Docker + Docker Compose           |
-| Deployment | AWS EC2 t2/t3.micro (Ubuntu)      |
+**AI Health Companion** is a full-stack web application that bridges the gap between patients and actionable health insights. Users can:
+
+- Securely register and authenticate
+- Upload prescription documents (PDF, JPG, PNG)
+- Describe their symptoms in natural language
+- Trigger AI-powered analysis via Google Gemini
+- View structured results: detected diseases, prescribed medicines with dosage schedules, doctor advice, and lifestyle recommendations
+
+The system is designed for production deployment — containerised with Docker, deployed on AWS EC2, and built following clean architecture principles that separate concerns across controllers, services, models, and schemas.
 
 ---
 
-## 2. Architecture
+## 2. Problem Statement
 
-### Logical Flow
+Patients often struggle to:
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                          Internet                           │
-│                             │                               │
-│                    TCP :80 (HTTP)                           │
-│                             │                               │
-│              ┌──────────────▼──────────────┐               │
-│              │   nginx  (Docker container)  │               │
-│              │   • Serves Angular SPA       │               │
-│              │   • Proxies /api/* → backend │               │
-│              └──────────────┬──────────────┘               │
-│                             │  Internal Docker network      │
-│              ┌──────────────▼──────────────┐               │
-│              │  FastAPI  (Docker container) │               │
-│              │  • JWT Auth middleware       │               │
-│              │  • Prescription upload       │               │
-│              │  • Gemini AI integration     │               │
-│              │  • REST API :8000            │               │
-│              └──────┬───────────────┬───────┘               │
-│                     │               │                       │
-│         ┌───────────▼───┐   ┌───────▼────────────┐         │
-│         │  MySQL 8.0    │   │  Docker Volume      │         │
-│         │  (container)  │   │  prescription_      │         │
-│         │  :3306        │   │  uploads            │         │
-│         │  (internal    │   │  /app/uploads/      │         │
-│         │   only)       │   │  prescriptions/     │         │
-│         └───────────────┘   └────────────────────┘         │
-└─────────────────────────────────────────────────────────────┘
-```
+1. **Understand their prescriptions** — medical jargon is inaccessible to most people
+2. **Track medicine schedules** — multiple prescriptions with different dosages and frequencies
+3. **Connect symptoms to diagnoses** — without waiting for a follow-up consultation
 
-### Container Network
-
-```
-ai-health-network  (Docker bridge)
-  ├── ai-health-frontend   → exposes host :80
-  ├── ai-health-backend    → internal :8000  (not exposed in prod)
-  └── ai-health-mysql      → internal :3306  (not exposed in prod)
-```
-
-### Volumes
-
-| Volume Name            | Mount Point (container)   | Purpose                        |
-|------------------------|---------------------------|--------------------------------|
-| `mysql_data`           | `/var/lib/mysql`          | Persistent MySQL data files    |
-| `prescription_uploads` | `/app/uploads`            | Uploaded prescription images   |
+Existing solutions are either locked behind expensive subscriptions, require physical presence, or do not provide AI-driven insights. **AI Health Companion** provides a free, accessible, and intelligent bridge using state-of-the-art multimodal AI.
 
 ---
 
-## 3. Features
+## 3. Features Implemented
 
-### ✅ Completed
-
-| Phase | Feature                                                                 |
-|-------|-------------------------------------------------------------------------|
-| 1     | User signup & login with bcrypt-hashed passwords                        |
-| 1     | JWT access token issuance & validation                                  |
-| 1     | JWT middleware protecting all non-auth endpoints                        |
-| 2     | Authenticated prescription upload (JPG / PNG / PDF)                    |
-| 2     | Free-text symptom notes associated with each submission                 |
-| 2     | Submissions persisted and linked to user accounts                       |
-| 3     | Gemini AI analysis of prescription + symptoms                           |
-| 3     | Structured response: medicines, dosage, doctor advice, lifestyle tips   |
-| 3     | AI output persisted to DB (no re-calls on page load)                   |
-| 3     | User-visible medical disclaimer                                         |
-| 4     | Angular 21 SPA with auth, upload, and analysis views                   |
-| 5     | Multi-stage Dockerfiles for backend and frontend                        |
-| 5     | docker-compose.yml for local development                                |
-| 6     | Production docker-compose override (no exposed MySQL/backend ports)     |
-| 6     | EC2 deployment runbook & deploy script                                  |
-| 6     | Automated MySQL backup script with 7-day rotation                       |
-| 6     | Service health-check script                                             |
-
-### ⏭ Skipped (Good-to-Have)
-
-| Feature                          | Reason skipped                                      |
-|----------------------------------|-----------------------------------------------------|
-| Per-medicine reminder schedule   | Out of scope for initial submission timeline        |
-| Dose taken / skipped tracking    | Depends on reminder feature                         |
-| Email / WebSocket notifications  | Requires extra infrastructure (SMTP / Redis)        |
+| # | Feature | Status |
+|---|---------|--------|
+| 1 | User Registration (email + password) | ✅ Complete |
+| 2 | JWT Authentication (login / logout) | ✅ Complete |
+| 3 | Prescription Upload (PDF / JPG / PNG, max 10 MB) | ✅ Complete |
+| 4 | Symptom Submission alongside prescription | ✅ Complete |
+| 5 | Google Gemini AI Analysis (multimodal) | ✅ Complete |
+| 6 | Structured AI Result: diseases, medicines, advice | ✅ Complete |
+| 7 | Medicine Dosage & Schedule Extraction | ✅ Complete |
+| 8 | Analysis Persistence & Idempotent Caching | ✅ Complete |
+| 9 | Angular 21 SPA Frontend | ✅ Complete |
+| 10 | Angular Material UI Components | ✅ Complete |
+| 11 | Protected Routes (Auth Guard) | ✅ Complete |
+| 12 | Dockerised 3-service Stack | ✅ Complete |
+| 13 | AWS EC2 Production Deployment | ✅ Complete |
+| 14 | Alembic Database Migrations | ✅ Complete |
+| 15 | OpenAPI / Swagger Docs at `/docs` | ✅ Complete |
 
 ---
 
-## 4. Local Setup
+## 4. Tech Stack
+
+### Backend
+| Layer | Technology | Version |
+|-------|-----------|---------|
+| Web Framework | FastAPI | ≥ 0.115 |
+| ASGI Server | Uvicorn | ≥ 0.30 |
+| ORM | SQLAlchemy | ≥ 2.0 |
+| Migrations | Alembic | ≥ 1.13 |
+| Database Driver | PyMySQL | ≥ 1.1 |
+| Auth | python-jose + bcrypt | ≥ 3.3 / ≥ 4.0 |
+| Validation | Pydantic v2 | ≥ 2.7 |
+| AI Integration | google-genai (Gemini) | ≥ 2.7 |
+| Testing | pytest + httpx | ≥ 8.0 / ≥ 0.27 |
+
+### Frontend
+| Layer | Technology | Version |
+|-------|-----------|---------|
+| Framework | Angular | 21 |
+| UI Library | Angular Material + CDK | 21 |
+| HTTP Client | Angular HttpClient | built-in |
+| Routing | Angular Router | built-in |
+| Language | TypeScript | 5.x |
+| Build | Angular CLI / esbuild | 21 |
+
+### Infrastructure
+| Component | Technology |
+|-----------|-----------|
+| Database | MySQL 8.0 |
+| Container Runtime | Docker + Docker Compose |
+| Reverse Proxy / Static | Nginx (inside frontend container) |
+| Cloud Provider | AWS EC2 (Ubuntu 22.04 LTS) |
+
+---
+
+## 5. System Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         AWS EC2 Instance                            │
+│                                                                     │
+│  ┌──────────────────────────────────────────────────────────────┐  │
+│  │                    Docker Compose Stack                       │  │
+│  │                                                              │  │
+│  │  ┌─────────────────┐   ┌─────────────────┐                  │  │
+│  │  │   Frontend       │   │    Backend       │                  │  │
+│  │  │  Angular 21      │   │   FastAPI        │                  │  │
+│  │  │  Nginx :80       │──▶│   Uvicorn :8000  │                  │  │
+│  │  └─────────────────┘   └────────┬────────┘                  │  │
+│  │                                  │                            │  │
+│  │                         ┌────────▼────────┐                  │  │
+│  │                         │    MySQL 8.0     │                  │  │
+│  │                         │    Port :3306    │                  │  │
+│  │                         └─────────────────┘                  │  │
+│  └──────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
+                                    │
+                         ┌──────────▼──────────┐
+                         │  Google Gemini API   │
+                         │  (External Service)  │
+                         └─────────────────────┘
+```
+
+**Request flow:**
+1. Browser → Nginx (port 80) → serves Angular SPA
+2. Angular SPA → HTTP API calls → FastAPI backend (port 8000)
+3. FastAPI → SQLAlchemy → MySQL 8.0
+4. FastAPI → google-genai SDK → Google Gemini API
+5. Gemini response → parsed → persisted → returned to frontend
+
+---
+
+## 6. Project Structure
+
+```
+ai-health-companion/
+├── backend/
+│   ├── app/
+│   │   ├── controllers/        # HTTP layer — routing only, no business logic
+│   │   │   ├── auth_controller.py
+│   │   │   ├── prescription_controller.py
+│   │   │   └── analysis_controller.py
+│   │   ├── services/           # Business logic layer
+│   │   │   ├── auth_service.py
+│   │   │   ├── prescription_service.py
+│   │   │   ├── analysis_service.py
+│   │   │   └── gemini_service.py
+│   │   ├── models/             # SQLAlchemy ORM models
+│   │   │   ├── user_model.py
+│   │   │   ├── prescription_model.py
+│   │   │   ├── analysis_model.py
+│   │   │   └── medicine_model.py
+│   │   ├── schemas/            # Pydantic request/response schemas
+│   │   ├── database/           # DB session and base declarative
+│   │   ├── dependencies/       # FastAPI dependency injectors
+│   │   ├── middleware/         # JWT auth + global exception middleware
+│   │   └── utils/              # Config (pydantic-settings), logger
+│   ├── alembic/                # Database migration scripts
+│   ├── tests/                  # pytest test suite
+│   ├── uploads/prescriptions/  # Uploaded prescription files
+│   ├── Dockerfile
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── src/app/
+│   │   ├── core/               # Guards, interceptors, services
+│   │   ├── features/           # Feature modules: auth, dashboard, prescriptions, analysis
+│   │   └── shared/             # Shared components and pipes
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   └── package.json
+│
+├── docker-compose.yml          # Local development compose
+├── docker-compose.prod.yml     # Production compose override
+└── README.md
+```
+
+---
+
+## 7. Database Schema Overview
+
+```
+┌──────────────────────┐
+│        users         │
+├──────────────────────┤
+│ id (UUID, PK)        │
+│ email (UNIQUE)       │
+│ password_hash        │
+│ is_active            │
+│ created_at           │
+│ updated_at           │
+└──────────┬───────────┘
+           │ 1:N
+┌──────────▼───────────┐
+│    prescriptions     │
+├──────────────────────┤
+│ id (BIGINT, PK)      │
+│ user_id (FK→users)   │
+│ original_file_name   │
+│ stored_file_name     │
+│ file_path            │
+│ file_type            │
+│ file_size            │
+│ symptoms             │
+│ upload_status        │
+│ created_at           │
+│ updated_at           │
+└──────────┬───────────┘
+           │ 1:1
+┌──────────▼───────────┐        ┌──────────────────────┐
+│     ai_analysis      │        │      medicines        │
+├──────────────────────┤        ├──────────────────────┤
+│ id (BIGINT, PK)      │  1:N   │ id (BIGINT, PK)      │
+│ prescription_id (FK) │───────▶│ analysis_id (FK)     │
+│ disease_detected     │        │ medicine_name        │
+│ doctor_advice (JSON) │        │ dosage               │
+│ lifestyle_changes    │        │ frequency            │
+│ raw_response         │        │ duration             │
+│ analysis_status      │        │ notes                │
+│ created_at           │        │ created_at           │
+│ updated_at           │        │ updated_at           │
+└──────────────────────┘        └──────────────────────┘
+```
+
+**Key design decisions:**
+- `users.id` is a UUID string (not auto-increment) to prevent ID enumeration attacks
+- `ai_analysis` has a UNIQUE constraint on `prescription_id` — enforcing one-to-one at the DB level
+- `doctor_advice` and `lifestyle_changes` are stored as JSON-serialised TEXT for SQLite/MySQL portability
+- `raw_response` stores the complete Gemini output for audit purposes, never exposed via API
+
+---
+
+## 8. Environment Variables
+
+Create `backend/.env` with the following:
+
+```dotenv
+# ── Application ──────────────────────────────────────────────────────────────
+APP_NAME=AI Health Companion API
+APP_ENV=production          # development | production
+APP_DEBUG=false
+
+HOST=0.0.0.0
+PORT=8000
+
+# ── Database ─────────────────────────────────────────────────────────────────
+DATABASE_URL=mysql+pymysql://ai_health_user:strongpassword@localhost:3306/ai_health_db
+
+# Docker Compose uses these to initialise the MySQL container
+MYSQL_ROOT_PASSWORD=strongrootpassword
+MYSQL_DATABASE=ai_health_db
+MYSQL_USER=ai_health_user
+MYSQL_PASSWORD=strongpassword
+MYSQL_PORT=3306
+
+# ── JWT ───────────────────────────────────────────────────────────────────────
+JWT_SECRET_KEY=replace_with_64_char_random_string_generated_by_openssl
+JWT_ALGORITHM=HS256
+JWT_EXPIRE_MINUTES=60
+
+# ── Google Gemini ─────────────────────────────────────────────────────────────
+GEMINI_API_KEY=your_google_ai_studio_api_key_here
+
+# ── CORS ─────────────────────────────────────────────────────────────────────
+CORS_ORIGINS=["http://localhost","http://localhost:4200","http://YOUR_EC2_PUBLIC_IP"]
+
+# ── Ports (used by docker-compose) ───────────────────────────────────────────
+BACKEND_PORT=8000
+FRONTEND_PORT=80
+```
+
+> ⚠️ **Never commit `.env` to source control.** Commit a `.env.example` template instead.
+
+---
+
+## 9. Local Development Setup
 
 ### Prerequisites
 
-- Python 3.12+
-- Node.js 22+
-- MySQL 8 running locally **or** use Docker Compose (recommended)
+| Tool | Minimum Version |
+|------|----------------|
+| Python | 3.10+ |
+| Node.js | 20+ |
+| npm | 10+ |
+| MySQL | 8.0 (or use Docker) |
+| Git | any |
 
-### Backend (without Docker)
+### Backend (FastAPI)
 
 ```bash
-cd backend
+# 1. Clone the repository
+git clone https://github.com/YOUR_USERNAME/ai-health-companion.git
+cd ai-health-companion/backend
+
+# 2. Create and activate virtual environment
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
+
+# 3. Install dependencies
 pip install -r requirements.txt
 
+# 4. Configure environment
 cp .env.example .env
 # Edit .env — set DATABASE_URL, JWT_SECRET_KEY, GEMINI_API_KEY
 
+# 5. Run database migrations
 alembic upgrade head
-uvicorn app.main:app --reload
-# API available at http://localhost:8000
-# Swagger UI at  http://localhost:8000/docs
+
+# 6. Start the development server
+python main.py
+# API:        http://localhost:8000
+# Swagger UI: http://localhost:8000/docs
+# ReDoc:      http://localhost:8000/redoc
 ```
 
-### Frontend (without Docker)
+### Frontend (Angular)
 
 ```bash
+cd ai-health-companion/frontend
+
+# 1. Install dependencies
+npm install
+
+# 2. Start dev server (proxies API calls to localhost:8000)
+npm start
+# App available at: http://localhost:4200
+```
+
+### Running Tests
+
+```bash
+# Backend unit and integration tests
+cd backend
+pytest tests/ -v
+
+# Frontend unit tests
 cd frontend
-npm install --legacy-peer-deps
-npx ng serve
-# App available at http://localhost:4200
+npm test
 ```
 
 ---
 
-## 5. Docker Setup
+## 10. Docker Setup
 
-### Quick start (local development)
+### Quick Start (Recommended)
 
 ```bash
-# 1. Clone the repo
-git clone https://github.com/<YOUR_GITHUB_USERNAME>/ai-health-companion.git
+# 1. Clone repository
+git clone https://github.com/YOUR_USERNAME/ai-health-companion.git
 cd ai-health-companion
 
-# 2. Create root .env
-cp .env.example .env
-# Edit .env — fill in MYSQL_ROOT_PASSWORD, MYSQL_PASSWORD, etc.
-
-# 3. Create backend .env
+# 2. Configure environment
 cp backend/.env.example backend/.env
-# Edit backend/.env — fill in JWT_SECRET_KEY, GEMINI_API_KEY, etc.
+# Edit backend/.env — set GEMINI_API_KEY and JWT_SECRET_KEY at minimum
 
-# 4. Start all services
-docker compose up -d
+# 3. Build and start all three services
+docker compose up -d --build
 
-# 5. Tail logs
-docker compose logs -f
-```
+# 4. Run database migrations (first run only)
+docker compose exec backend alembic upgrade head
 
-| Service  | URL                              |
-|----------|----------------------------------|
-| Frontend | http://localhost                 |
-| Backend  | http://localhost:8000            |
-| API Docs | http://localhost:8000/docs       |
-
-### Useful commands
-
-```bash
-docker compose ps                        # service status & health
-docker compose logs -f backend           # backend logs
-docker compose restart backend           # restart one service
-docker compose down                      # stop everything (keep volumes)
-docker compose down -v                   # stop & wipe all volumes
-docker compose exec mysql mysql -u root -p   # MySQL shell
-```
-
----
-
-## 6. EC2 Deployment
-
-### 6.1 Provision EC2 Instance
-
-1. Log in to the [AWS Console](https://console.aws.amazon.com/).
-2. Launch a new EC2 instance:
-   - **AMI**: Ubuntu Server 22.04 LTS (or 24.04 LTS)
-   - **Instance type**: `t2.micro` or `t3.micro` (free tier eligible)
-   - **Storage**: 20 GB gp3 (default is sufficient)
-   - **Key pair**: Create or select an existing key pair — download the `.pem` file.
-3. Note the **Public IPv4 address** after launch.
-
-### 6.2 Configure Security Groups
-
-Create (or edit) the instance's Security Group with the following **inbound rules**:
-
-| Type        | Protocol | Port  | Source         | Purpose                         |
-|-------------|----------|-------|----------------|---------------------------------|
-| SSH         | TCP      | 22    | Your IP only   | Administrative access           |
-| HTTP        | TCP      | 80    | 0.0.0.0/0      | Angular frontend + API proxy    |
-| Custom TCP  | TCP      | 8000  | **None**       | ⛔ Do NOT expose — internal only |
-| Custom TCP  | TCP      | 3306  | **None**       | ⛔ Do NOT expose — internal only |
-
-> **Security note:** Restrict SSH (port 22) to your own IP address rather than `0.0.0.0/0` to prevent brute-force attacks.
-
-**Outbound rules:** Allow all outbound traffic (default — needed for Docker image pulls and Gemini API calls).
-
-### 6.3 Connect to the Instance
-
-```bash
-chmod 400 your-key.pem
-ssh -i your-key.pem ubuntu@<EC2_PUBLIC_IP>
-```
-
-### 6.4 Automated Deployment (recommended)
-
-```bash
-# From your LOCAL machine — copy the deploy script to EC2 first:
-scp -i your-key.pem scripts/deploy.sh ubuntu@<EC2_PUBLIC_IP>:~/
-
-# Then SSH in and run it:
-ssh -i your-key.pem ubuntu@<EC2_PUBLIC_IP>
-bash ~/deploy.sh
-```
-
-The script will:
-1. Update system packages
-2. Install Docker Engine + Docker Compose plugin
-3. Clone the repository
-4. Validate your `.env` file
-5. Build images and start all services
-
-### 6.5 Manual Deployment (step-by-step)
-
-```bash
-# ── On the EC2 instance ───────────────────────────────────────────────────
-
-# 1. Install Docker
-curl -fsSL https://get.docker.com | sudo bash
-sudo usermod -aG docker $USER
-newgrp docker
-
-# 2. Clone the repository
-git clone https://github.com/<YOUR_GITHUB_USERNAME>/ai-health-companion.git
-cd ai-health-companion
-
-# 3. Create and configure the root .env
-cp .env.production.example .env
-nano .env
-# Fill in:  MYSQL_ROOT_PASSWORD, MYSQL_PASSWORD, JWT_SECRET_KEY,
-#           GEMINI_API_KEY, EC2_PUBLIC_IP
-
-# 4. Create and configure the backend .env
-cp backend/.env.example backend/.env
-nano backend/.env
-# Fill in:  JWT_SECRET_KEY (same as root), GEMINI_API_KEY, DATABASE_URL
-# DATABASE_URL should be:
-#   mysql+pymysql://<MYSQL_USER>:<MYSQL_PASSWORD>@mysql:3306/<MYSQL_DATABASE>
-
-# 5. Build images
-docker compose -f docker-compose.yml -f docker-compose.prod.yml build
-
-# 6. Start services
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-
-# 7. Verify health
-./scripts/health-check.sh
-```
-
-### 6.6 Verify Deployment
-
-```bash
-# Check all containers are running and healthy
+# 5. Verify all services are healthy
 docker compose ps
-
-# Expected output:
-# NAME                 STATUS          PORTS
-# ai-health-mysql      healthy         3306/tcp        ← internal only
-# ai-health-backend    healthy         8000/tcp        ← internal only
-# ai-health-frontend   healthy         0.0.0.0:80->80/tcp
-
-# Open in browser
-open http://<EC2_PUBLIC_IP>
 ```
 
-### 6.7 Set Up Automated Backups (optional but recommended)
+**Services after startup:**
+
+| Service | URL |
+|---------|-----|
+| Frontend (Angular + Nginx) | http://localhost |
+| Backend (FastAPI) | http://localhost:8000 |
+| Swagger UI | http://localhost:8000/docs |
+| MySQL | localhost:3306 (internal only) |
+
+### Useful Docker Commands
 
 ```bash
-chmod +x scripts/backup.sh
+# Stream logs from a service
+docker compose logs -f backend
+docker compose logs -f frontend
 
-# Test a manual backup
-./scripts/backup.sh
+# Stop all services (preserves volumes)
+docker compose down
 
-# Add daily cron job at 02:00 UTC
-(crontab -l 2>/dev/null; echo "0 2 * * * /home/ubuntu/ai-health-companion/scripts/backup.sh >> /var/log/ai-health-backup.log 2>&1") | crontab -
-```
+# Stop and wipe all data
+docker compose down -v
 
-Backups are stored in `./backups/` as gzip-compressed SQL dumps, and the last 7 days are retained automatically.
+# Rebuild a single service after code changes
+docker compose up -d --build backend
 
-### 6.8 Updating the Application
+# Run migrations
+docker compose exec backend alembic upgrade head
 
-```bash
-cd /home/ubuntu/ai-health-companion
-
-# Pull latest code
-git pull origin main
-
-# Rebuild and restart (zero-downtime approach: build first, then swap)
-docker compose -f docker-compose.yml -f docker-compose.prod.yml build
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# Open a shell in a container
+docker compose exec backend bash
 ```
 
 ---
 
-## 7. Environment Variables
+## 11. EC2 Deployment Runbook
 
-### Root `.env` (next to `docker-compose.yml`)
+> Full step-by-step guide available in [Deployment_Runbook.md](./Deployment_Runbook.md)
 
-| Variable              | Required | Description                                          |
-|-----------------------|----------|------------------------------------------------------|
-| `MYSQL_ROOT_PASSWORD` | ✅        | MySQL root password (strong random string)          |
-| `MYSQL_DATABASE`      | ✅        | Database name (e.g. `health_companion`)             |
-| `MYSQL_USER`          | ✅        | Application DB user                                 |
-| `MYSQL_PASSWORD`      | ✅        | Application DB user password                        |
-| `MYSQL_PORT`          | ❌        | MySQL port (default: `3306`, internal use only)     |
-| `BACKEND_PORT`        | ❌        | Host port for backend (default: `8000`, local only) |
-| `FRONTEND_PORT`       | ❌        | Host port for frontend (default: `80`)              |
-| `EC2_PUBLIC_IP`       | ✅ (prod) | EC2 public IP — used for CORS_ORIGINS               |
-| `DOMAIN`              | ❌        | Custom domain name (leave blank if using bare IP)   |
+### Summary
 
-### `backend/.env`
-
-| Variable              | Required | Description                                                 |
-|-----------------------|----------|-------------------------------------------------------------|
-| `APP_NAME`            | ❌        | Application display name                                   |
-| `APP_ENV`             | ✅        | `development` or `production`                              |
-| `APP_DEBUG`           | ❌        | `true` enables Swagger UI; set `false` in production        |
-| `DATABASE_URL`        | ✅        | SQLAlchemy connection string                               |
-| `JWT_SECRET_KEY`      | ✅        | Secret for signing JWTs — generate with `openssl rand -hex 64` |
-| `JWT_ALGORITHM`       | ❌        | Default: `HS256`                                           |
-| `JWT_EXPIRE_MINUTES`  | ❌        | Token lifetime in minutes (default: `60`)                  |
-| `GEMINI_API_KEY`      | ✅        | Google Gemini API key from [AI Studio](https://aistudio.google.com/app/apikey) |
-
-**How to generate strong secrets:**
 ```bash
-# JWT secret (64-byte hex)
-openssl rand -hex 64
+# SSH into your EC2 instance
+ssh -i your-key.pem ubuntu@YOUR_EC2_PUBLIC_IP
 
-# MySQL passwords (32-byte base64)
-openssl rand -base64 32
+# Install Docker (one-time setup)
+sudo apt-get update && sudo apt-get install -y docker.io docker-compose-plugin
+sudo usermod -aG docker ubuntu && newgrp docker
+
+# Clone and configure
+git clone https://github.com/YOUR_USERNAME/ai-health-companion.git
+cd ai-health-companion
+cp backend/.env.example backend/.env
+# Edit .env with production secrets
+
+# Deploy
+docker compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml exec backend alembic upgrade head
+
+# Verify
+curl http://localhost:8000/health
+curl http://localhost/
 ```
 
 ---
 
-## 8. API Documentation
-
-Interactive Swagger UI is available at `http://localhost:8000/docs` when `APP_DEBUG=true`.
+## 12. API Documentation
 
 ### Base URL
+- **Local:** `http://localhost:8000/api/v1`
+- **Production:** `http://YOUR_EC2_PUBLIC_IP:8000/api/v1`
+- **Interactive Swagger Docs:** `http://localhost:8000/docs`
 
-```
-http://<host>/api
-```
+### Authentication Endpoints
 
-### Authentication
+#### `POST /api/v1/auth/signup` — Register a new user
 
-| Method | Endpoint              | Auth | Description              |
-|--------|-----------------------|------|--------------------------|
-| POST   | `/api/auth/signup`    | ❌    | Register a new user      |
-| POST   | `/api/auth/login`     | ❌    | Login and receive JWT    |
-| GET    | `/api/auth/me`        | ✅    | Get current user profile |
-
-### Prescriptions
-
-| Method | Endpoint                         | Auth | Description                        |
-|--------|----------------------------------|------|------------------------------------|
-| POST   | `/api/prescriptions/`            | ✅    | Upload prescription + symptoms     |
-| GET    | `/api/prescriptions/`            | ✅    | List all prescriptions for user    |
-| GET    | `/api/prescriptions/{id}`        | ✅    | Get a single prescription          |
-
-### AI Analysis
-
-| Method | Endpoint                            | Auth | Description                        |
-|--------|-------------------------------------|------|------------------------------------|
-| POST   | `/api/analysis/{prescription_id}`   | ✅    | Trigger Gemini analysis            |
-| GET    | `/api/analysis/{prescription_id}`   | ✅    | Fetch stored analysis result       |
-
-### Health
-
-| Method | Endpoint    | Auth | Description            |
-|--------|-------------|------|------------------------|
-| GET    | `/health`   | ❌    | Liveness probe         |
-
-### Request / Response Contract (example)
-
-**POST `/api/auth/signup`**
+**Request:**
 ```json
-// Request
-{
-  "email": "user@example.com",
-  "password": "SecurePassword123!"
-}
+{ "email": "user@example.com", "password": "SecurePassword123!" }
+```
 
-// Response 201
+**Response `201`:**
+```json
 {
-  "id": 1,
-  "email": "user@example.com",
-  "created_at": "2026-05-31T10:00:00Z"
-}
-
-// Error 409 (duplicate email)
-{
-  "detail": "Email already registered."
+  "success": true,
+  "message": "Account created successfully.",
+  "status_code": 201,
+  "data": {
+    "user": { "id": "550e8400-...", "email": "user@example.com", "is_active": true },
+    "access_token": "eyJhbGci..."
+  }
 }
 ```
 
-**POST `/api/prescriptions/`** (multipart/form-data)
+#### `POST /api/v1/auth/login` — Authenticate user
+
+**Response `200`:**
+```json
+{
+  "success": true,
+  "message": "Login successful.",
+  "status_code": 200,
+  "data": { "access_token": "eyJhbGci..." }
+}
 ```
-file:         <binary — JPG / PNG / PDF>
-symptom_notes: "Headache and fatigue for 3 days"
+
+### Prescription Endpoints
+> Require `Authorization: Bearer <token>` header.
+
+#### `POST /api/v1/prescriptions/upload`
+- **Body:** `multipart/form-data`
+- `prescription_file`: File (PDF/JPG/PNG, max 10 MB)
+- `symptoms`: string, optional (max 2000 chars)
+
+#### `GET /api/v1/prescriptions` — List all prescriptions for current user
+#### `GET /api/v1/prescriptions/{id}` — Get single prescription
+
+### Analysis Endpoints
+> Require `Authorization: Bearer <token>` header.
+
+#### `POST /api/v1/analysis/{prescription_id}` — Trigger or return cached AI analysis
+
+**Response `201`:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 7,
+    "prescription_id": 42,
+    "disease_detected": "Hypertension, Type 2 Diabetes",
+    "medicines": [
+      {
+        "medicine_name": "Metformin",
+        "dosage": "500mg",
+        "frequency": "2 times daily",
+        "duration": "30 days",
+        "notes": "Take after meals"
+      }
+    ],
+    "doctor_advice": ["Monitor blood pressure daily"],
+    "lifestyle_changes": ["30 minutes of walking daily"],
+    "analysis_status": "completed"
+  }
+}
 ```
+
+#### `GET /api/v1/analysis/{prescription_id}` — Retrieve stored analysis
+
+### System
+#### `GET /health` → `{ "status": "ok" }`
 
 ---
 
-## 9. Assumptions & Trade-offs
+## 13. Security Considerations
 
-| Decision                        | Rationale                                                                                    |
-|---------------------------------|----------------------------------------------------------------------------------------------|
-| **Local disk storage (volume)** | Keeps the stack self-contained and free-tier compliant. S3 is the production-grade alternative but requires an IAM role and incurs costs. |
-| **Single EC2 instance**         | Assignment constraint. A real production setup would separate DB and app tiers.              |
-| **No HTTPS / TLS**              | Adding Let's Encrypt Certbot + nginx TLS config is a one-hour addition but requires a domain name. Left as a documented future improvement. |
-| **2 uvicorn workers**           | Balanced for t2/t3.micro (1 vCPU). Increase to 4 on t3.small+.                             |
-| **JWT stored in localStorage**  | Simpler for the SPA demo. HttpOnly cookie would be more secure against XSS.                 |
-| **Gemini free tier**            | Sufficient for demo traffic; may hit rate limits under load.                                 |
-| **No reminder system**          | Requires either a persistent WebSocket server or a cron-based email worker — both add operational complexity beyond the assignment scope. |
+### Authentication & Authorisation
+- Passwords hashed with **bcrypt** (work factor ≥ 12) — plaintext never stored or logged
+- **JWTs** signed with HS256, expire in 60 minutes by default
+- **JWT middleware** validates every request; public routes are explicitly whitelisted (`/health`, `/docs`, `/auth/*`)
+- **Ownership enforcement** — prescriptions and analyses are verified to belong to the authenticated user before any operation
+
+### Input Validation
+- All request bodies validated by **Pydantic v2** with strict type coercion
+- File uploads: MIME type whitelist (PDF, JPG, PNG), maximum 10 MB enforced at the service layer
+- Uploaded files are stored with **UUID filenames** — original filenames are stored for display only, never used for I/O
+
+### Infrastructure
+- MySQL is on a private Docker bridge network — **never directly exposed** to the public internet
+- CORS origins are explicitly enumerated — no wildcard `*` in production configuration
+- HTTPS should be enforced via Nginx SSL termination or an AWS Application Load Balancer in production
+
+### Data Handling
+- `raw_response` (full Gemini output) is stored for audit but **never returned** via any API endpoint
+- User UUIDs prevent sequential ID enumeration (IDOR) attacks
+- Password hash is explicitly excluded from all `__repr__` methods and log output
 
 ---
 
-## 10. Future Improvements
+## 14. Design Decisions
 
-1. **HTTPS / TLS** — Add Certbot (Let's Encrypt) + nginx HTTPS config for any custom domain.
-2. **S3 file storage** — Replace the Docker volume with an S3 bucket + IAM instance role for durability and scalability.
-3. **Medicine reminder system** — Implement a Celery + Redis worker to send scheduled email/push reminders for each medicine dose.
-4. **Dose tracking** — Add `dose_logs` table to record taken/skipped doses with timestamps.
-5. **Refresh tokens** — Issue short-lived access tokens + long-lived refresh tokens for better security.
-6. **Rate limiting** — Add `slowapi` rate-limiting middleware to the FastAPI app.
-7. **CI/CD pipeline** — GitHub Actions workflow to build, test, push images to ECR, and SSH-deploy to EC2 on every merge to `main`.
-8. **Horizontal scaling** — Move to ECS Fargate + RDS Aurora when traffic justifies the cost.
-9. **Audit logging** — Log all prescription accesses for HIPAA-style compliance.
-10. **HttpOnly JWT cookies** — Replace localStorage JWT with HttpOnly cookies to mitigate XSS risk.
+### Strict Layered Architecture (Controller → Service → Model)
+Controllers contain zero business logic. They accept HTTP input, delegate to services, and return responses. Services are fully testable without an HTTP context.
 
+### Pydantic v2 Settings with `@lru_cache`
+`pydantic-settings` with `lru_cache` parses environment variables once per process, provides strong type validation at startup, and prevents configuration drift.
+
+### Idempotent AI Analysis
+`POST /analysis/{id}` never calls Gemini more than once for a successfully completed analysis. Cached results are returned immediately, preventing unnecessary API costs.
+
+### UUID Primary Keys for Users
+UUID string PKs (not auto-increment integers) eliminate sequential enumeration vulnerabilities common in multi-tenant applications.
+
+### Alembic Migrations
+Schema is managed through versioned Alembic scripts rather than `Base.metadata.create_all()`, providing a safe and auditable upgrade path in production.
+
+### CORS Middleware Ordering
+CORS middleware is registered last (runs first in Starlette's LIFO stack) so that OPTIONS preflight requests are handled before JWT validation, preventing spurious 401 errors on preflight.
+
+---
+
+## 15. Trade-offs
+
+| Decision | Benefit | Trade-off |
+|----------|---------|-----------|
+| MySQL over PostgreSQL | Wide hosting support | PostgreSQL has richer JSON/full-text search |
+| Stateless JWT | Horizontal scaling friendly | Token revocation requires a blocklist |
+| Synchronous SQLAlchemy | Simpler codebase | Lower throughput vs. async SQLAlchemy |
+| Google Gemini cloud API | No GPU needed, SOTA AI | Latency + cost dependency on external service |
+| Single EC2 instance | Cost-effective | No HA; single point of failure |
+| Local file storage | Zero cost | Doesn't scale horizontally; S3 needed in production |
+| JSON-serialised TEXT arrays | SQLite/MySQL portable | Less queryable than native JSON columns |
+
+---
+
+## 16. Future Enhancements
+
+### Near Term
+- [ ] AWS S3 for prescription file storage
+- [ ] Email verification on signup
+- [ ] Password reset via email token
+- [ ] JWT refresh token flow
+
+### Medium Term
+- [ ] Async SQLAlchemy for higher throughput
+- [ ] Redis caching + rate limiting for Gemini calls
+- [ ] Celery background task queue for async analysis processing
+- [ ] Pagination for prescription list endpoint
+
+### Long Term
+- [ ] HTTPS with Nginx + Let's Encrypt / AWS ACM
+- [ ] ECS / EKS deployment with auto-scaling
+- [ ] HIPAA-adjacent audit logging
+- [ ] Doctor portal for annotation and review
+- [ ] Mobile client (React Native / Flutter)
+- [ ] PDF report export
+
+---
+
+## 17. Disclaimer
+
+> ⚠️ **This application is a technology demonstration created for educational and evaluation purposes only.**
+>
+> AI analysis results are generated by a general-purpose language model (Google Gemini) and **are not a substitute for professional medical advice, diagnosis, or treatment.**
+>
+> - Do **not** use this application to make real medical decisions
+> - Always consult a qualified healthcare professional
+> - The developers assume **no liability** for decisions made based on AI-generated content
+
+---
+
+## 18. Screenshots
+
+> See [Screenshots.md](./Screenshots.md) for the full screenshot guide.
+
+| Screen | File |
+|--------|------|
+| Login Page | `docs/screenshots/01_login.png` |
+| Signup Page | `docs/screenshots/02_signup.png` |
+| Dashboard | `docs/screenshots/03_dashboard.png` |
+| Upload Prescription | `docs/screenshots/04_upload.png` |
+| Prescription List | `docs/screenshots/05_prescription_list.png` |
+| AI Analysis Result | `docs/screenshots/06_analysis_result.png` |
+| Docker Containers | `docs/screenshots/07_docker_containers.png` |
+| EC2 Deployment | `docs/screenshots/08_ec2_deployment.png` |
+| Public URL | `docs/screenshots/09_public_url.png` |
+
+---
+
+## 19. Author Information
+
+**Developer:** *[Your Full Name]*
+**Role:** Full Stack / Backend Engineer
+**Email:** *[your.email@example.com]*
+**GitHub:** [github.com/YOUR_USERNAME](https://github.com/YOUR_USERNAME)
+**LinkedIn:** [linkedin.com/in/YOUR_PROFILE](https://linkedin.com/in/YOUR_PROFILE)
+
+### Skills Demonstrated
+
+| Domain | Technologies |
+|--------|-------------|
+| Backend Engineering | FastAPI, SQLAlchemy ORM, Alembic, JWT, bcrypt, Pydantic v2 |
+| AI Integration | Google Gemini multimodal API, prompt engineering, structured parsing |
+| Frontend Engineering | Angular 21, Angular Material, RxJS, route guards, HTTP interceptors |
+| DevOps | Docker multi-stage builds, Docker Compose, AWS EC2, Nginx |
+| Engineering Practices | Clean architecture, DI, input validation, error handling, pytest |
+
+---
+
+*Built with ❤️ using FastAPI · Angular · Google Gemini · Docker · AWS EC2*
