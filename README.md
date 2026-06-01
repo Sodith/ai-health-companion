@@ -31,7 +31,8 @@
 16. [Future Enhancements](#16-future-enhancements)
 17. [Disclaimer](#17-disclaimer)
 18. [Screenshots](#18-screenshots)
-19. [Author Information](#19-author-information)
+19. [Additional Documentation](#19-additional-documentation)
+20. [Author Information](#20-author-information)
 
 ---
 
@@ -73,13 +74,17 @@ Existing solutions are either locked behind expensive subscriptions, require phy
 | 6 | Structured AI Result: diseases, medicines, advice | ✅ Complete |
 | 7 | Medicine Dosage & Schedule Extraction | ✅ Complete |
 | 8 | Analysis Persistence & Idempotent Caching | ✅ Complete |
-| 9 | Angular 21 SPA Frontend | ✅ Complete |
-| 10 | Angular Material UI Components | ✅ Complete |
-| 11 | Protected Routes (Auth Guard) | ✅ Complete |
-| 12 | Dockerised 3-service Stack | ✅ Complete |
-| 13 | AWS EC2 Production Deployment | ✅ Complete |
-| 14 | Alembic Database Migrations | ✅ Complete |
-| 15 | OpenAPI / Swagger Docs at `/docs` | ✅ Complete |
+| 9 | Auto Medicine Schedule Creation after AI Analysis | ✅ Complete |
+| 10 | Today's Reminders (lazy generation per-day) | ✅ Complete |
+| 11 | Mark Reminder as Taken / Skipped | ✅ Complete |
+| 12 | Medication History (grouped by date, filterable) | ✅ Complete |
+| 13 | Angular 21 SPA Frontend | ✅ Complete |
+| 14 | Angular Material UI Components | ✅ Complete |
+| 15 | Protected Routes (Auth Guard) | ✅ Complete |
+| 16 | Dockerised 3-service Stack | ✅ Complete |
+| 17 | AWS EC2 Production Deployment | ✅ Complete |
+| 18 | Alembic Database Migrations | ✅ Complete |
+| 19 | OpenAPI / Swagger Docs at `/docs` | ✅ Complete |
 
 ---
 
@@ -164,17 +169,21 @@ ai-health-companion/
 │   │   ├── controllers/        # HTTP layer — routing only, no business logic
 │   │   │   ├── auth_controller.py
 │   │   │   ├── prescription_controller.py
-│   │   │   └── analysis_controller.py
+│   │   │   ├── analysis_controller.py
+│   │   │   └── reminder_controller.py   # Medicines + Reminders routes
 │   │   ├── services/           # Business logic layer
 │   │   │   ├── auth_service.py
 │   │   │   ├── prescription_service.py
 │   │   │   ├── analysis_service.py
-│   │   │   └── gemini_service.py
+│   │   │   ├── gemini_service.py
+│   │   │   └── reminder_service.py      # Schedule & reminder logic
 │   │   ├── models/             # SQLAlchemy ORM models
 │   │   │   ├── user_model.py
 │   │   │   ├── prescription_model.py
 │   │   │   ├── analysis_model.py
-│   │   │   └── medicine_model.py
+│   │   │   ├── medicine_model.py
+│   │   │   ├── medicine_schedule_model.py
+│   │   │   └── reminder_model.py
 │   │   ├── schemas/            # Pydantic request/response schemas
 │   │   ├── database/           # DB session and base declarative
 │   │   ├── dependencies/       # FastAPI dependency injectors
@@ -189,15 +198,25 @@ ai-health-companion/
 ├── frontend/
 │   ├── src/app/
 │   │   ├── core/               # Guards, interceptors, services
-│   │   ├── features/           # Feature modules: auth, dashboard, prescriptions, analysis
+│   │   ├── features/           # Feature modules
+│   │   │   ├── auth/           # Login & signup pages
+│   │   │   ├── dashboard/      # Home dashboard
+│   │   │   ├── prescriptions/  # Upload & list prescriptions
+│   │   │   ├── analysis/       # AI analysis results
+│   │   │   └── medicines/      # My medicines, reminders, history
 │   │   └── shared/             # Shared components and pipes
 │   ├── Dockerfile
 │   ├── nginx.conf
 │   └── package.json
 │
-├── docker-compose.yml          # Local development compose
-├── docker-compose.prod.yml     # Production compose override
-└── README.md
+├── docker-compose.yml           # Local development compose
+├── docker-compose.prod.yml      # Production compose override
+├── README.md
+├── Architecture.md
+├── Deployment_Runbook.md
+├── EC2-DEPLOYMENT-GUIDE.md
+├── Screenshots.md
+└── Submission_Checklist.md
 ```
 
 ---
@@ -243,8 +262,25 @@ ai-health-companion/
 │ raw_response         │        │ duration             │
 │ analysis_status      │        │ notes                │
 │ created_at           │        │ created_at           │
-│ updated_at           │        │ updated_at           │
-└──────────────────────┘        └──────────────────────┘
+│ updated_at           │        └──────────┬───────────┘
+└──────────────────────┘                   │ 1:1 (optional)
+                                           │
+┌──────────────────────┐        ┌──────────▼───────────┐
+│      reminders       │        │  medicine_schedules   │
+├──────────────────────┤        ├──────────────────────┤
+│ id (BIGINT, PK)      │  N:1   │ id (BIGINT, PK)      │
+│ schedule_id (FK)     │◀───────│ user_id (FK→users)   │
+│ user_id (FK→users)   │        │ medicine_id (FK, opt)│
+│ reminder_time        │        │ medicine_name        │
+│ status               │        │ dosage               │
+│ taken_at             │        │ frequency            │
+│ created_at           │        │ duration_days        │
+│ updated_at           │        │ start_date           │
+└──────────────────────┘        │ end_date             │
+                                │ is_active            │
+                                │ created_at           │
+                                │ updated_at           │
+                                └──────────────────────┘
 ```
 
 **Key design decisions:**
@@ -539,6 +575,59 @@ curl http://localhost/
 ### System
 #### `GET /health` → `{ "status": "ok" }`
 
+### Medicine Schedule Endpoints
+> Require `Authorization: Bearer <token>` header.
+> Auto-created after a successful AI analysis.
+
+#### `GET /api/v1/medicines` — List all medicine schedules
+**Response `200`:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "medicine_name": "Amoxicillin 500mg",
+      "dosage": "500mg",
+      "frequency": "Twice daily (BID)",
+      "duration_days": 7,
+      "start_date": "2026-06-01",
+      "end_date": "2026-06-08",
+      "is_active": true
+    }
+  ]
+}
+```
+
+#### `GET /api/v1/medicines/{id}` — Get schedule with today's reminders
+#### `PATCH /api/v1/medicines/{id}/deactivate` — Stop a medicine schedule
+#### `GET /api/v1/medicines/history?days=7` — Medication history grouped by date
+
+### Reminder Endpoints
+> Require `Authorization: Bearer <token>` header.
+
+#### `GET /api/v1/reminders/today` — Today's reminders (auto-generates missing ones)
+**Response `200`:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "schedule_id": 1,
+      "medicine_name": "Amoxicillin 500mg",
+      "dosage": "500mg",
+      "reminder_time": "2026-06-01T08:00:00+00:00",
+      "status": "pending",
+      "taken_at": null
+    }
+  ]
+}
+```
+
+#### `PATCH /api/v1/reminders/{id}/taken` — Mark reminder as taken
+#### `PATCH /api/v1/reminders/{id}/skipped` — Mark reminder as skipped
+
 ---
 
 ## 13. Security Considerations
@@ -640,7 +729,7 @@ CORS middleware is registered last (runs first in Starlette's LIFO stack) so tha
 
 ## 18. Screenshots
 
-> See [Screenshots.md](./Screenshots.md) for the full screenshot guide.
+> See [Screenshots.md](./Screenshots.md) for the full screenshot guide with instructions.
 
 | Screen | File |
 |--------|------|
@@ -650,19 +739,32 @@ CORS middleware is registered last (runs first in Starlette's LIFO stack) so tha
 | Upload Prescription | `docs/screenshots/04_upload.png` |
 | Prescription List | `docs/screenshots/05_prescription_list.png` |
 | AI Analysis Result | `docs/screenshots/06_analysis_result.png` |
-| Docker Containers | `docs/screenshots/07_docker_containers.png` |
-| EC2 Deployment | `docs/screenshots/08_ec2_deployment.png` |
-| Public URL | `docs/screenshots/09_public_url.png` |
+| My Medicines | `docs/screenshots/07_my_medicines.png` |
+| Today's Reminders | `docs/screenshots/08_todays_reminders.png` |
+| Medication History | `docs/screenshots/09_medication_history.png` |
+| Docker Containers Running | `docs/screenshots/10_docker_containers.png` |
+| EC2 Deployment (AWS Console) | `docs/screenshots/11_ec2_deployment.png` |
+| Public URL Working | `docs/screenshots/12_public_url.png` |
 
 ---
 
-## 19. Author Information
+## 19. Additional Documentation
 
-**Developer:** *[Your Full Name]*
-**Role:** Full Stack / Backend Engineer
-**Email:** *[your.email@example.com]*
-**GitHub:** [github.com/YOUR_USERNAME](https://github.com/YOUR_USERNAME)
-**LinkedIn:** [linkedin.com/in/YOUR_PROFILE](https://linkedin.com/in/YOUR_PROFILE)
+| Document | Description |
+|----------|-------------|
+| [Architecture Document](./Architecture.md) | High-level system design, component diagrams, DB design, security model, scalability |
+| [Deployment Runbook](./Deployment_Runbook.md) | Full step-by-step production deployment guide with troubleshooting |
+| [EC2 Deployment Guide](./EC2-DEPLOYMENT-GUIDE.md) | Free-tier AWS EC2 setup from scratch including security groups and SSH |
+| [Screenshots Guide](./Screenshots.md) | Required screenshots list with filenames, descriptions and checklists |
+| [Submission Checklist](./Submission_Checklist.md) | Pre-submission verification checklist for hiring manager review |
+
+---
+
+## 20. Author Information
+
+**Developer:** Sodith
+**Role:** Full Stack Engineer
+**GitHub:** [github.com/Sodith/ai-health-companion](https://github.com/Sodith/ai-health-companion)
 
 ### Skills Demonstrated
 
