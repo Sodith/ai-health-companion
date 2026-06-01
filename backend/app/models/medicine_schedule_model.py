@@ -45,8 +45,8 @@ class MedicineSchedule(Base):
     )
 
     # FK — user ownership
-    user_id: Mapped[int] = mapped_column(
-        BigInteger().with_variant(Integer, "sqlite"),
+    user_id: Mapped[str] = mapped_column(
+        String(36),
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,

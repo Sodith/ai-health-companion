@@ -22,7 +22,7 @@ def upgrade() -> None:
     op.create_table(
         "medicine_schedules",
         sa.Column("id", sa.BigInteger(), autoincrement=True, nullable=False),
-        sa.Column("user_id", sa.BigInteger(), nullable=False),
+        sa.Column("user_id", sa.String(36), nullable=False),
         sa.Column("medicine_id", sa.BigInteger(), nullable=True),
         sa.Column("medicine_name", sa.String(255), nullable=False),
         sa.Column("dosage", sa.String(100), nullable=True),
@@ -45,7 +45,7 @@ def upgrade() -> None:
         "reminders",
         sa.Column("id", sa.BigInteger(), autoincrement=True, nullable=False),
         sa.Column("schedule_id", sa.BigInteger(), nullable=False),
-        sa.Column("user_id", sa.BigInteger(), nullable=False),
+        sa.Column("user_id", sa.String(36), nullable=False),
         sa.Column("reminder_time", sa.DateTime(timezone=True), nullable=False),
         sa.Column("status", sa.String(20), nullable=False, server_default="pending"),
         sa.Column("taken_at", sa.DateTime(timezone=True), nullable=True),
