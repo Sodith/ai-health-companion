@@ -72,7 +72,7 @@ def parse_duration_days(duration: str | None) -> int:
 
 
 def create_schedules_from_analysis(
-    db: Session, user_id: int, analysis_id: int
+    db: Session, user_id: str, analysis_id: int
 ) -> list[MedicineSchedule]:
     """Auto-create medicine schedules from all medicines in an analysis.
 
@@ -128,7 +128,7 @@ def create_schedules_from_analysis(
 # ---------------------------------------------------------------------------
 
 
-def get_user_schedules(db: Session, user_id: int) -> list[MedicineSchedule]:
+def get_user_schedules(db: Session, user_id: str) -> list[MedicineSchedule]:
     """Get all medicine schedules for a user."""
     return (
         db.query(MedicineSchedule)
@@ -138,7 +138,7 @@ def get_user_schedules(db: Session, user_id: int) -> list[MedicineSchedule]:
     )
 
 
-def get_schedule_by_id(db: Session, user_id: int, schedule_id: int) -> MedicineSchedule:
+def get_schedule_by_id(db: Session, user_id: str, schedule_id: int) -> MedicineSchedule:
     """Get a single schedule, verifying ownership."""
     schedule = (
         db.query(MedicineSchedule)
@@ -150,7 +150,7 @@ def get_schedule_by_id(db: Session, user_id: int, schedule_id: int) -> MedicineS
     return schedule
 
 
-def deactivate_schedule(db: Session, user_id: int, schedule_id: int) -> MedicineSchedule:
+def deactivate_schedule(db: Session, user_id: str, schedule_id: int) -> MedicineSchedule:
     """Deactivate a medicine schedule."""
     schedule = get_schedule_by_id(db, user_id, schedule_id)
     schedule.is_active = False
@@ -203,7 +203,7 @@ def _generate_reminders_for_date(
     return reminders
 
 
-def get_today_reminders(db: Session, user_id: int) -> list[dict]:
+def get_today_reminders(db: Session, user_id: str) -> list[dict]:
     """Get today's reminders, generating any missing ones first."""
     today = date.today()
 
@@ -251,8 +251,14 @@ def get_today_reminders(db: Session, user_id: int) -> list[dict]:
         .all()
     )
 
-    # Enrich with medicine info
-    schedule_map = {s.id: s for s in active_schedules}
+    # Enrich with medicine info — include expired schedules too
+    reminder_schedule_ids = {r.schedule_id for r in reminders}
+    all_schedules = (
+        db.query(MedicineSchedule)
+        .filter(MedicineSchedule.id.in_(reminder_schedule_ids))
+        .all()
+    ) if reminder_schedule_ids else []
+    schedule_map = {s.id: s for s in all_schedules}
     result = []
     for r in reminders:
         sched = schedule_map.get(r.schedule_id)
@@ -270,7 +276,7 @@ def get_today_reminders(db: Session, user_id: int) -> list[dict]:
 
 
 def get_reminders(
-    db: Session, user_id: int, target_date: date | None = None, status_filter: str | None = None
+    db: Session, user_id: str, target_date: date | None = None, status_filter: str | None = None
 ) -> list[dict]:
     """Get reminders with optional date and status filters."""
     query = (
@@ -322,7 +328,7 @@ def get_reminders(
 # ---------------------------------------------------------------------------
 
 
-def mark_reminder(db: Session, user_id: int, reminder_id: int, new_status: str) -> dict:
+def mark_reminder(db: Session, user_id: str, reminder_id: int, new_status: str) -> dict:
     """Mark a reminder as taken or skipped."""
     reminder = (
         db.query(Reminder)
@@ -353,7 +359,7 @@ def mark_reminder(db: Session, user_id: int, reminder_id: int, new_status: str) 
 
 
 def get_medicine_history(
-    db: Session, user_id: int, days: int = 7, medicine_id: int | None = None
+    db: Session, user_id: str, days: int = 7, medicine_id: int | None = None
 ) -> list[dict]:
     """Get medication history grouped by date."""
     cutoff = datetime.combine(

@@ -310,7 +310,7 @@ def trigger_analysis(
     # 6. Auto-create medicine schedules for reminder system (Phase 7)
     try:
         from app.services.reminder_service import create_schedules_from_analysis
-        create_schedules_from_analysis(db, int(user_id), analysis.id)
+        create_schedules_from_analysis(db, str(user_id), analysis.id)
         db.commit()
     except Exception as exc:
         logger.warning("Failed to create medicine schedules: %s", exc)
