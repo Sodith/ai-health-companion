@@ -307,6 +307,15 @@ def trigger_analysis(
         len(analysis.medicines),
     )
 
+    # 6. Auto-create medicine schedules for reminder system (Phase 7)
+    try:
+        from app.services.reminder_service import create_schedules_from_analysis
+        create_schedules_from_analysis(db, int(user_id), analysis.id)
+        db.commit()
+    except Exception as exc:
+        logger.warning("Failed to create medicine schedules: %s", exc)
+        # Non-critical — don't fail the analysis response
+
     return (
         AnalysisResponse.model_validate(analysis),
         status.HTTP_201_CREATED,

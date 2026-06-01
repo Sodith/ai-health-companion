@@ -4,25 +4,36 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="24494f09-0fd6-4153-b81e-6fc815fb6e52" name="Changes" comment="full completed 1">
-      <change afterPath="$PROJECT_DIR$/.env.ec2" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/EC2-DEPLOYMENT-GUIDE.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/.env.ec2" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/aws-deploy.ps1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/ec2_deploy_app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/ec2_deploy_windows.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/ec2_provision.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="24494f09-0fd6-4153-b81e-6fc815fb6e52" name="Changes" comment="final completed">
+      <change afterPath="$PROJECT_DIR$/backend/alembic/versions/20260601_1000_a1b2c3d4e5f6_create_medicine_schedules_and_reminders.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/controllers/reminder_controller.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/models/medicine_schedule_model.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/models/reminder_model.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/schemas/reminder_schema.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/services/reminder_service.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/tests/test_reminder_api.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/tests/test_reminder_utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/services/reminder.service.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/services/reminder.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/medicines/detail/medicine-detail.component.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/medicines/history/medicine-history.component.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/medicines/list/medicine-list.component.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/medicines/reminders/today-reminders.component.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/medicines/reminders/today-reminders.component.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/models/reminder.model.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/ec2-redeploy.ps1" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/ec2-start.ps1" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/ec2-status.ps1" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/ec2-stop.ps1" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/schemas/prescription_schema.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/schemas/prescription_schema.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/services/gemini_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/gemini_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/services/prescription_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/prescription_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/prescriptions/list/list.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/prescriptions/list/list.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/shared/models/prescription.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/shared/models/prescription.model.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/environments/environment.prod.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/environments/environment.prod.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/services/analysis_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/analysis_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.routes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.routes.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/prescriptions/list/list.component.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/prescriptions/list/list.component.spec.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,6 +91,7 @@
     &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;SHELLCHECK.PATH&quot;: &quot;I do mind&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
@@ -207,7 +219,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780211521606</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="final completed">
+      <option name="closed" value="true" />
+      <created>1780249858978</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1780249858978</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -220,7 +240,8 @@
     <MESSAGE value="working phase 5 c" />
     <MESSAGE value="full completed" />
     <MESSAGE value="full completed 1" />
-    <option name="LAST_COMMIT_MESSAGE" value="full completed 1" />
+    <MESSAGE value="final completed" />
+    <option name="LAST_COMMIT_MESSAGE" value="final completed" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

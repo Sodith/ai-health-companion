@@ -8,5 +8,7 @@ from app.models.user_model import User  # noqa: F401
 from app.models.prescription_model import Prescription  # noqa: F401
 from app.models.analysis_model import AIAnalysis  # noqa: F401
 from app.models.medicine_model import Medicine  # noqa: F401
+from app.models.medicine_schedule_model import MedicineSchedule  # noqa: F401
+from app.models.reminder_model import Reminder  # noqa: F401
 
-__all__ = ["User", "Prescription", "AIAnalysis", "Medicine"]
+__all__ = ["User", "Prescription", "AIAnalysis", "Medicine", "MedicineSchedule", "Reminder"]

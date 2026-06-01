@@ -13,9 +13,9 @@ import { NotificationService }  from '../../core/services/notification.service';
 import { PrescriptionListItem } from '../../shared/models/prescription.model';
 
 const mockItems: PrescriptionListItem[] = [
-  { id: 1, original_file_name: 'a.pdf', file_type: 'pdf', file_size: 1024, symptoms: null, upload_status: 'processed',  created_at: '2026-01-03T10:00:00Z' },
-  { id: 2, original_file_name: 'b.jpg', file_type: 'jpg', file_size: 2048, symptoms: null, upload_status: 'processing', created_at: '2026-01-02T10:00:00Z' },
-  { id: 3, original_file_name: 'c.png', file_type: 'png', file_size: 512,  symptoms: null, upload_status: 'failed',     created_at: '2026-01-01T10:00:00Z' },
+  { id: 1, original_file_name: 'a.pdf', file_type: 'pdf', file_size: 1024, symptoms: null, upload_status: 'processed',  analysis_status: 'completed', created_at: '2026-01-03T10:00:00Z' },
+  { id: 2, original_file_name: 'b.jpg', file_type: 'jpg', file_size: 2048, symptoms: null, upload_status: 'processing', analysis_status: 'processing', created_at: '2026-01-02T10:00:00Z' },
+  { id: 3, original_file_name: 'c.png', file_type: 'png', file_size: 512,  symptoms: null, upload_status: 'failed',     analysis_status: 'failed',    created_at: '2026-01-01T10:00:00Z' },
 ];
 
 describe('DashboardComponent', () => {

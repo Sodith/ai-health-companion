@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.controllers.auth_controller import router as auth_router
 from app.controllers.prescription_controller import router as prescription_router
 from app.controllers.analysis_controller import router as analysis_router
+from app.controllers.reminder_controller import medicine_router, reminder_router
 from app.middleware.auth_middleware import JWTAuthMiddleware
 from app.middleware.exception_middleware import register_exception_handlers
 from app.utils.config import get_settings
@@ -56,6 +57,8 @@ app.add_middleware(
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(prescription_router, prefix="/api/v1")
 app.include_router(analysis_router, prefix="/api/v1")
+app.include_router(medicine_router, prefix="/api/v1")
+app.include_router(reminder_router, prefix="/api/v1")
 
 # --- System endpoints --------------------------------------------------------
 

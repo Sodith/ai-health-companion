@@ -404,6 +404,42 @@
   mat-card-content { padding: 16px !important; }
 }
 
+// ── Quick Actions Row (Phase 7) ───────────────────────────────────────────────
+.quick-actions-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+
+  .quick-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 24px !important;
+    font-weight: 500;
+    border-color: #1976d2 !important;
+    color: #1976d2 !important;
+    transition: background 0.2s;
+
+    mat-icon { font-size: 20px; width: 20px; height: 20px; }
+
+    &:hover { background: rgba(25, 118, 210, 0.08) !important; }
+
+    &.reminder-btn {
+      border-color: #f57c00 !important;
+      color: #f57c00 !important;
+      &:hover { background: rgba(245, 124, 0, 0.08) !important; }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .quick-actions-row {
+    .quick-action-btn { flex: 1; justify-content: center; min-width: 140px; }
+  }
+}
+
 // ── Responsive helpers ────────────────────────────────────────────────────────
 .desktop-only {
   @media (max-width: 768px) { display: none !important; }
@@ -481,4 +517,3 @@
     .upload-cta { width: 100%; justify-content: center; }
   }
 }
-

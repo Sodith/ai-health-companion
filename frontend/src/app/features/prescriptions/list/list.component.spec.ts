@@ -9,9 +9,9 @@ import { PrescriptionService }  from '../../../core/services/prescription.servic
 import { NotificationService }  from '../../../core/services/notification.service';
 import { PrescriptionListItem } from '../../../shared/models/prescription.model';
 const mockItems: PrescriptionListItem[] = [
-  { id: 1, original_file_name: 'a.pdf', file_type: 'pdf', file_size: 1024, symptoms: 'cough', upload_status: 'processed',  created_at: new Date().toISOString() },
-  { id: 2, original_file_name: 'b.jpg', file_type: 'jpg', file_size: 2048, symptoms: null,    upload_status: 'processing', created_at: new Date().toISOString() },
-  { id: 3, original_file_name: 'c.png', file_type: 'png', file_size: 512,  symptoms: null,    upload_status: 'failed',     created_at: new Date().toISOString() },
+  { id: 1, original_file_name: 'a.pdf', file_type: 'pdf', file_size: 1024, symptoms: 'cough', upload_status: 'processed',  analysis_status: 'completed', created_at: new Date().toISOString() },
+  { id: 2, original_file_name: 'b.jpg', file_type: 'jpg', file_size: 2048, symptoms: null,    upload_status: 'processing', analysis_status: null,        created_at: new Date().toISOString() },
+  { id: 3, original_file_name: 'c.png', file_type: 'png', file_size: 512,  symptoms: null,    upload_status: 'failed',     analysis_status: 'failed',    created_at: new Date().toISOString() },
 ];
 describe('ListComponent', () => {
   let fixture: ComponentFixture<ListComponent>;

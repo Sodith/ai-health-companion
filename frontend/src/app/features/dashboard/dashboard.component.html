@@ -43,6 +43,13 @@
           <mat-icon>upload_file</mat-icon> Upload Prescription
         </button>
         <mat-divider />
+        <button mat-menu-item routerLink="/medicines">
+          <mat-icon>medication</mat-icon> My Medicines
+        </button>
+        <button mat-menu-item routerLink="/medicines/reminders">
+          <mat-icon>notifications</mat-icon> Today's Reminders
+        </button>
+        <mat-divider />
         <button mat-menu-item (click)="logout()" class="logout-item">
           <mat-icon>logout</mat-icon> Sign Out
         </button>
@@ -122,6 +129,22 @@
 
     </div>
   }
+
+  <!-- ── Quick Actions ───────────────────────────────────────────────────── -->
+  <div class="quick-actions-row">
+    <a mat-stroked-button routerLink="/medicines" class="quick-action-btn">
+      <mat-icon>medication</mat-icon>
+      My Medicines
+    </a>
+    <a mat-stroked-button routerLink="/medicines/reminders" class="quick-action-btn reminder-btn">
+      <mat-icon>notifications_active</mat-icon>
+      Today's Reminders
+    </a>
+    <a mat-stroked-button routerLink="/medicines/history" class="quick-action-btn">
+      <mat-icon>history</mat-icon>
+      Medication History
+    </a>
+  </div>
 
   <!-- ── Main Content Row ─────────────────────────────────────────────────── -->
   <div class="content-row">
@@ -227,6 +250,10 @@
   </a>
   <a routerLink="/prescriptions/upload" class="nav-item upload-fab">
     <mat-icon>add</mat-icon>
+  </a>
+  <a routerLink="/medicines/reminders" class="nav-item">
+    <mat-icon>notifications</mat-icon>
+    <span>Reminders</span>
   </a>
   <button class="nav-item" (click)="logout()">
     <mat-icon>logout</mat-icon>

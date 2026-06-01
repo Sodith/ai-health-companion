@@ -68,6 +68,38 @@ export const routes: Routes = [
     title: 'Analysis Results — AI Health Companion',
   },
 
+  // ── Medicine & Reminder routes ────────────────────────────────────────────
+  {
+    path: 'medicines',
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/medicines/list/medicine-list.component').then(m => m.MedicineListComponent),
+        title: 'My Medicines — AI Health Companion',
+      },
+      {
+        path: 'reminders',
+        loadComponent: () =>
+          import('./features/medicines/reminders/today-reminders.component').then(m => m.TodayRemindersComponent),
+        title: "Today's Reminders — AI Health Companion",
+      },
+      {
+        path: 'history',
+        loadComponent: () =>
+          import('./features/medicines/history/medicine-history.component').then(m => m.MedicineHistoryComponent),
+        title: 'Medication History — AI Health Companion',
+      },
+      {
+        path: ':id',
+        loadComponent: () =>
+          import('./features/medicines/detail/medicine-detail.component').then(m => m.MedicineDetailComponent),
+        title: 'Medicine Details — AI Health Companion',
+      },
+    ],
+  },
+
   // ── Wildcard fallback ────────────────────────────────────────────────────
   {
     path: '**',
