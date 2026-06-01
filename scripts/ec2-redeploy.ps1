@@ -30,13 +30,11 @@ ssh -i $KEY -o StrictHostKeyChecking=no ubuntu@$IP "cd ~/ai-health-companion && 
 Ok "Code updated!"
 
 Log "Rebuilding and restarting containers (this takes 2-3 min)..."
-ssh -i $KEY -o StrictHostKeyChecking=no ubuntu@$IP @"
-cd ~/ai-health-companion
-docker compose -f docker-compose.yml -f docker-compose.prod.yml down
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
-sleep 20
-docker ps --format 'table {{.Names}}\t{{.Status}}'
-"@
+ssh -i $KEY -o StrictHostKeyChecking=no ubuntu@$IP "cd ~/ai-health-companion && docker compose -f docker-compose.yml -f docker-compose.prod.yml down"
+ssh -i $KEY -o StrictHostKeyChecking=no ubuntu@$IP "cd ~/ai-health-companion && docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build"
+Log "Waiting 20s for containers to start..."
+Start-Sleep -Seconds 20
+ssh -i $KEY -o StrictHostKeyChecking=no ubuntu@$IP "docker ps --format 'table {{.Names}}\t{{.Status}}'"
 
 Write-Host ""
 Ok "Redeploy complete!"

@@ -51,12 +51,10 @@ Ok "SSH is ready!"
 
 # ── Step 5: Start Docker containers ──────────────────────────────
 Log "Starting Docker containers..."
-ssh -i $KEY -o StrictHostKeyChecking=no ubuntu@$IP @"
-cd ~/ai-health-companion
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-sleep 15
-docker ps --format 'table {{.Names}}\t{{.Status}}'
-"@
+ssh -i $KEY -o StrictHostKeyChecking=no ubuntu@$IP "cd ~/ai-health-companion && docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d"
+Log "Waiting 15s for containers to start..."
+Start-Sleep -Seconds 15
+ssh -i $KEY -o StrictHostKeyChecking=no ubuntu@$IP "docker ps --format 'table {{.Names}}\t{{.Status}}'"
 
 # ── Step 6: Done ──────────────────────────────────────────────────
 Write-Host ""
