@@ -8,6 +8,19 @@
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)](https://docs.docker.com/compose)
 [![AWS EC2](https://img.shields.io/badge/AWS-EC2-FF9900?logo=amazonaws)](https://aws.amazon.com/ec2)
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python)](https://www.python.org)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-98.82.168.239-brightgreen?logo=amazonaws)](http://98.82.168.239)
+
+---
+
+## 🌐 Live Application
+
+| | URL |
+|---|---|
+| 🚀 **Frontend (App)** | **http://98.82.168.239** |
+| 📄 **API Docs (Swagger)** | **http://98.82.168.239/docs** |
+| ❤️ **Health Check** | http://98.82.168.239/health |
+
+> ⚠️ **Note:** The EC2 public IP may change if the instance is restarted without an Elastic IP. If the above URL is unreachable, the instance may be stopped to save costs — check the latest IP in the [Submission Checklist](./Submission_Checklist.md).
 
 ---
 
@@ -493,8 +506,8 @@ curl http://localhost/
 
 ### Base URL
 - **Local:** `http://localhost:8000/api/v1`
-- **Production:** `http://YOUR_EC2_PUBLIC_IP:8000/api/v1`
-- **Interactive Swagger Docs:** `http://localhost:8000/docs`
+- **Production:** `http://98.82.168.239/api/v1`
+- **Interactive Swagger Docs:** `http://98.82.168.239/docs`
 
 ### Authentication Endpoints
 
